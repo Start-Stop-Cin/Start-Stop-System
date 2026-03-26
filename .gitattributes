@@ -1,0 +1,8 @@
+# MATLAB/Simulink
+*.m text eol=lf
+*.slx binary
+*.mdl binary
+*.slxc binary
+*.mat binary
+*.p binary
+*.mex* binary

@@ -1,0 +1,6 @@
+# Simulink arquivos temporarios e cache
+*.autosave
+*.slx.autosave
+slprj/
+*_slprj/
+*.slxc
