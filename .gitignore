@@ -1,6 +1,11 @@
 # Simulink arquivos temporarios e cache
 *.autosave
+*.asv
 *.slx.autosave
 slprj/
 *_slprj/
 *.slxc
+*.m~
+*.mex*
+slprj/
+octave-workspace
