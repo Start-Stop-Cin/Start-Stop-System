@@ -13,3 +13,7 @@ This project demonstrates the integration of Simulink with data exposed by the B
 ## Video Demonstration
 
 https://github.com/user-attachments/assets/8f917b70-9e52-4892-8204-16a846267783
+
+Para mais detalhes, acesse o video abaixo
+
+[Vídeo demonstração](https://drive.google.com/file/d/1GjPoC64JINfgNunAyI_hqf7nIkj5mdin/view)
