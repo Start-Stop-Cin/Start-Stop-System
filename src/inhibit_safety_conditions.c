@@ -8,6 +8,8 @@ int inhibit_safety_conditions( float InclinationAngle, int DoorStatus, int Seatb
     return 0;
 }
 
+sr_state_t flipFlopState = {0}; // Initial state of the flip-flop
+
 int standstill_management( int AutoStopActive, int BrakeStatus, int DoorStatus, int SeatbeltStatus ) {
     
     static int AutoStopActive_d = 0;
@@ -16,7 +18,7 @@ int standstill_management( int AutoStopActive, int BrakeStatus, int DoorStatus, 
     int setValue = AutoStopActive && ( !DoorStatus || !SeatbeltStatus );
     int resetValue = BrakeStatus && DoorStatus && SeatbeltStatus;
 
-    int Q = sr_flip_flop(setValue, resetValue);
+    int Q = sr_flip_flop(setValue, resetValue, &flipFlopState);
     int SafeStop = Q_d;
 
     AutoStopActive_d = AutoStopActive;
@@ -54,8 +56,6 @@ int sr_flip_flop(int S, int R, sr_state_t * state) {
 
     return state->Q;
 }
-
-sr_state_t flipFlopState = {0}; // Initial state of the flip-flop
 
 int * inhibit_wrapper(  float InclinationAngle, int DoorStatus, int SeatbeltStatus, int GearPosition, int SS_Enabled,
                         int AutoStopActive, int BrakeStatus,
