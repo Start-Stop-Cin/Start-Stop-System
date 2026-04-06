@@ -12,4 +12,10 @@ typedef struct {
 } sr_state_t;
 
 int sr_flip_flop(int S, int R, sr_state_t * state);
+
+int * inhibit_wrapper(  float InclinationAngle, int DoorStatus, int SeatbeltStatus, int GearPosition, int SS_Enabled,
+                        int AutoStopActive, int BrakeStatus,
+                        int IgnitionStatus, int EngineStopRequest, float VehicleSpeed,
+                        int * retVal 
+                    );
 #endif
