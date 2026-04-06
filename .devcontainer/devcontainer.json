@@ -18,7 +18,13 @@
 			]
 		}
 	},
-	"postCreateCommand": "sudo chown -R developer:developer /workspaces/Start-Stop-System && clang-18 --version && cppcheck --version",
-	"remoteUser": "developer",
-	"updateRemoteUserUID": true
+	"postCreateCommand": "clang-18 --version && cppcheck --version",
+	"remoteUser": "ubuntu",
+	"updateRemoteUserUID": true,
+	"mounts": [
+		"source=${localEnv:SSH_AUTH_SOCK},target=/ssh-agent,type=bind"
+	],
+	"remoteEnv": {
+		"SSH_AUTH_SOCK": "/ssh-agent"
+	}
 }
