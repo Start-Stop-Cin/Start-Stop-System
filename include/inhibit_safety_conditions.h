@@ -5,6 +5,10 @@ int inhibit_safety_conditions( float InclinationAngle, int DoorStatus, int Seatb
 
 int standstill_management( int AutoStopActive, int BrakeStatus, int DoorStatus, int SeatbeltStatus );
 
+typedef struct {
+    int Q;
+} sr_state_t;
+
 int sr_flip_flop(int S, int R);
 
 #endif
