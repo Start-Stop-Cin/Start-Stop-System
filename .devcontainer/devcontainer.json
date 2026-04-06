@@ -1,0 +1,24 @@
+{
+	"name": "Start-Stop C Dev Container",
+	"build": {
+		"dockerfile": "Dockerfile"
+	},
+	"customizations": {
+		"vscode": {
+			"settings": {
+				"terminal.integrated.defaultProfile.linux": "bash",
+				"C_Cpp.default.compilerPath": "/usr/bin/clang-18",
+				"C_Cpp.default.cStandard": "c99",
+				"C_Cpp.default.intelliSenseMode": "linux-clang-x64",
+				"files.eol": "\n"
+			},
+			"extensions": [
+				"ms-vscode.cpptools-extension-pack",
+				"ms-vscode.makefile-tools"
+			]
+		}
+	},
+	"postCreateCommand": "sudo chown -R developer:developer /workspaces/Start-Stop-System && clang-18 --version && cppcheck --version",
+	"remoteUser": "developer",
+	"updateRemoteUserUID": true
+}
