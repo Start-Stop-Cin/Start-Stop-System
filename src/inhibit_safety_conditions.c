@@ -66,8 +66,9 @@ int * inhibit_wrapper(  float InclinationAngle, int DoorStatus, int SeatbeltStat
     retVal[0] = inhibit_safety_conditions(InclinationAngle, DoorStatus, SeatbeltStatus, GearPosition, SS_Enabled) && standstill_management(AutoStopActive, BrakeStatus, DoorStatus, SeatbeltStatus);
     retVal[1] = drivecycle_memory_block(IgnitionStatus, EngineStopRequest, VehicleSpeed);
 
-    printf("AutoStopAllowed: %i\n", retVal[0]);
-    printf("SafeStop: %i\n", retVal[1]);
+    // // For debug purpose
+    // printf("AutoStopAllowed: %i\n", retVal[0]);
+    // printf("SafeStop: %i\n", retVal[1]);
 
     return retVal;
 }
