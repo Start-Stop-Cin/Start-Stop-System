@@ -72,3 +72,17 @@ int * inhibit_wrapper(  float InclinationAngle, int DoorStatus, int SeatbeltStat
 
     return retVal;
 }
+
+int test_inhibit_wrapper(void) {
+    // Manual test for the wrapper function
+
+    int retVal[2] = {0};
+
+    inhibit_wrapper(0.2f, 1, 1, 2, 1, 1, 1, 1, 1, 0.0f, retVal);
+
+    printf("AutoStopAllowed: %d\n", retVal[0]);
+    printf("SafeStop: %d\n", retVal[1]);
+
+    return 0;
+}
+
