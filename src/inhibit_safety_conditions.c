@@ -37,30 +37,37 @@ int drivecycle_memory_block ( int IgnitionStatus, int EngineStopRequest, float V
     return y;
 }
 
-int sr_flip_flop(int S, int R) {
-    static int Q = 0;
+int sr_flip_flop(int S, int R, sr_state_t * state) {
+
+    /*
+        I have leaved this module state as a parameter to be able to test it in isolation,
+        thus improving the testability of the code.
+    */
 
     if (S == 1 && R == 0) {
-        Q = 1;
+        state->Q = 1;
     } else if (S == 0 && R == 1) {
-        Q = 0;
+        state->Q = 0;
     } else if (S == 1 && R == 1) {
-        Q = -1;
+        state->Q = -1;
     }
 
-    return Q;
+    return state->Q;
 }
 
-int main() {
+sr_state_t flipFlopState = {0}; // Initial state of the flip-flop
 
-    int retVal[2] = {0, 0};
+int * inhibit_wrapper(  float InclinationAngle, int DoorStatus, int SeatbeltStatus, int GearPosition, int SS_Enabled,
+                        int AutoStopActive, int BrakeStatus,
+                        int IgnitionStatus, int EngineStopRequest, float VehicleSpeed,
+                        int * retVal 
+                    ) {
 
-    retVal[0] = inhibit_safety_conditions(0, 0, 0, 2, 1) && standstill_management(1, 1, 0, 0);
-    retVal[1] = drivecycle_memory_block(1, 1, 5);
+    retVal[0] = inhibit_safety_conditions(InclinationAngle, DoorStatus, SeatbeltStatus, GearPosition, SS_Enabled) && standstill_management(AutoStopActive, BrakeStatus, DoorStatus, SeatbeltStatus);
+    retVal[1] = drivecycle_memory_block(IgnitionStatus, EngineStopRequest, VehicleSpeed);
 
     printf("AutoStopAllowed: %i\n", retVal[0]);
     printf("SafeStop: %i\n", retVal[1]);
 
-    return 0;
-
+    return retVal;
 }
