@@ -1,3 +1,6 @@
+# Build artifacts
+build/
+
 # Simulink arquivos temporarios e cache
 *.autosave
 *.asv
