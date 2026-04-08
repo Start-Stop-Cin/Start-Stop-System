@@ -11,8 +11,9 @@ int main() {
 
     while (true)
     {
-        // Update all inputs
+        /* UPDATE ALL INPUTS */
 
+		//	Update the inhibit conditions based on the current inputs and outputs
         bool * ss_inhibit_wrapper_retVal = {0};
         ss_inhibit_wrapper(
             inputs->inclination_angle, inputs->door_status, inputs->seatbelt_status, inputs->gear_position, inputs->ss_enable,
@@ -22,8 +23,11 @@ int main() {
         );
         inputs->autostop_allowed = ss_inhibit_wrapper_retVal[0];
 
+		// Update the buttom input
+		
 
-        //  Run the operation logic every 10ms with all updated inputs
+
+        /* RUN OPERATION LOGIC */
         SS_Operation_Run10ms( inputs, outputs );
 
         print_inputs_outputs( inputs, outputs );

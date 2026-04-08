@@ -80,8 +80,10 @@ void SS_Step(void) {
 
 void press_SS_button(void) {
     g_SS_Inputs.ButtonInput = true;
+	SS_Step();
 }
 
 void release_SS_button(void) {
     g_SS_Inputs.ButtonInput = false;
+	SS_Step();
 }

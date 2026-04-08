@@ -1,4 +1,4 @@
-CC      := gcc
+CC      := clang-18
 CFLAGS  := -std=c99 -Wall -Wextra -Wpedantic -Werror
 INCLUDE := -I include/
 SRC_DIR := src
@@ -40,7 +40,7 @@ misra: | $(OBJ_DIR_MARKER)
 
 # Check formatting without modifying files
 format-check:
-	clang-format -style=file --dry-run --Werror $(wildcard $(SRC_DIR)/*.c) $(wildcard include/*.h)
+	clang-format --dry-run --Werror $(wildcard $(SRC_DIR)/*.c) $(wildcard include/*.h)
 
 # Remove all build artifacts
 clean:
