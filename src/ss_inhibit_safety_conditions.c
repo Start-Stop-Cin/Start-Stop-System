@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 
+// Checks if all safety conditions are met to allow autostop based on the inclination angle, door status, seatbelt status, gear position, and whether the start-stop system is enabled.
 bool inhibit_safety_conditions( float InclinationAngle, bool DoorStatus, bool SeatbeltStatus, bool GearPosition, bool SS_Enabled ) {
     if (InclinationAngle > 0.15f && GearPosition == 2 && DoorStatus == true && SeatbeltStatus == true && SS_Enabled == true) {
         return true;
@@ -11,6 +12,7 @@ bool inhibit_safety_conditions( float InclinationAngle, bool DoorStatus, bool Se
 
 sr_state_t flipFlopState = {0}; // Initial state of the flip-flop
 
+//  Check if safe-stop is reachable
 bool standstill_management( bool AutoStopActive, bool BrakeStatus, bool DoorStatus, bool SeatbeltStatus ) {
     
     static bool AutoStopActive_d = 0;

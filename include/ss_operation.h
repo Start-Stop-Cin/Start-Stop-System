@@ -10,11 +10,15 @@ typedef struct
     bool ignition_on; // Indicates if the vehicle ignition is on
     bool ss_enable; // Indicates if the start-stop system is enabled by the user
     bool autostop_allowed; // Indicates if the current conditions allow for autostop (e.g., vehicle is stationary, engine is warm, etc.)
+    bool door_status; // Indicates if any door is open (true if any door is closed, false if any doors are open)
+    bool seatbelt_status; // Indicates if the driver's seatbelt is fastened (true if fastened, false if unfastened)
+
 
     bool brake_pressed; // Indicates if the brake pedal is pressed
     bool accelerator_pressed; // Indicates if the accelerator pedal is pressed
     SsGearPosition_t gear_position; // Current gear position
     float vehicle_speed_kmh; // Vehicle speed in km/h
+    float inclination_angle; // Vehicle inclination angle
 
     bool autostop_timeout_reached;  // Indicates if the autostop timeout has been reached (e.g., for automatic restart after a certain period of autostop)
 
