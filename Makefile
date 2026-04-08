@@ -40,7 +40,7 @@ misra: | $(OBJ_DIR_MARKER)
 
 # Check formatting without modifying files
 format-check:
-	clang-format --dry-run --Werror $(wildcard $(SRC_DIR)/*.c) $(wildcard include/*.h)
+	clang-format -style=file --dry-run --Werror $(wildcard $(SRC_DIR)/*.c) $(wildcard include/*.h)
 
 # Remove all build artifacts
 clean:

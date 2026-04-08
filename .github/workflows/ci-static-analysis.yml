@@ -1,4 +1,4 @@
-name: Static Analysis — MISRA C 2012 / C99
+name: CI - Build, Format and MISRA
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    name: Build (clang-18 / C99)
+    name: Build (clang-18 / C99 App)
     runs-on: ubuntu-24.04
     if: hashFiles('src/main.c') != ''
 
@@ -37,8 +37,27 @@ jobs:
             start-stop-container \
             ./build/start_stop_demo
 
+  format-check:
+    name: Format Check (clang-format)
+    runs-on: ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build dev image
+        run: docker build -t start-stop-container .devcontainer/
+
+      - name: Run format check
+        run: |
+          docker run --rm \
+            --user $(id -u):$(id -g) \
+            -v ${{ github.workspace }}:/workspaces/Start-Stop-System \
+            -w /workspaces/Start-Stop-System \
+            start-stop-container \
+            make format-check
+
   misra-analysis:
-    name: MISRA C 2012 / C99 (cppcheck)
+    name: Static Analysis (MISRA C 2012 / cppcheck)
     runs-on: ubuntu-24.04
 
     steps:
