@@ -41,8 +41,11 @@ extern SS_Inputs_t  g_SS_Inputs;
 extern SS_Outputs_t g_SS_Outputs;
 extern SS_State_t   g_SS_State;
 
-// Funções de API (usam as globais)
 void SS_Init(void);
 void SS_Step(void);
+
+// --- NOVAS FUNÇÕES DE ABSTRAÇÃO (APIs) ---
+void press_SS_button(void);   // Abstrai o Passo 2
+void release_SS_button(void); // Abstrai o Passo 4
 
 #endif
