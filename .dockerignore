@@ -1,0 +1,5 @@
+docs
+simulink-models
+tests/*.csv
+.git
+build

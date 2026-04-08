@@ -1,5 +1,6 @@
 #include "ss_operation.h"
 #include "ss_calib.h"
+#include <stdio.h>
 
 
 // Global variable to hold the current state of the start-stop system operation - initialized to VEHICLE_OFF
@@ -154,4 +155,26 @@ void SS_Operation_Run10ms(const SsOperationInputs_t *inputs, SsOperationOutputs_
 
     outputs->state = g_ss_op_state;
     outputs->autostop_active = (g_ss_op_state == SS_OP_STATE_AUTOSTOP_ACTIVE);
-} 
+}
+
+void print_inputs_outputs ( const SsOperationInputs_t *inputs, SsOperationOutputs_t *outputs ) {
+    printf("Inputs:\n");
+    printf("Ignition On: %d\n", inputs->ignition_on);
+    printf("SS Enable: %d\n", inputs->ss_enable);
+    printf("Autostop Allowed: %d\n", inputs->autostop_allowed);
+    printf("Door Status: %d\n", inputs->door_status);
+    printf("Seatbelt Status: %d\n", inputs->seatbelt_status);
+    printf("Brake Pressed: %d\n", inputs->brake_pressed);
+    printf("Accelerator Pressed: %d\n", inputs->accelerator_pressed);
+    printf("Gear Position: %d\n", inputs->gear_position);
+    printf("Vehicle Speed (km/h): %.2f\n", inputs->vehicle_speed_kmh);
+    printf("Inclination Angle: %.2f\n", inputs->inclination_angle);
+    printf("Autostop Timeout Reached: %d\n", inputs->autostop_timeout_reached);
+    printf("Button Input: %d\n", inputs->ButtonInput);
+
+    printf("\nOutputs:\n");
+    printf("Engine Stop Request: %d\n", outputs->engine_stop_request);
+    printf("Engine Restart Request: %d\n", outputs->engine_restart_request);
+    printf("Autostop Active: %d\n", outputs->autostop_active);
+    printf("State: %d\n", outputs->state);
+}

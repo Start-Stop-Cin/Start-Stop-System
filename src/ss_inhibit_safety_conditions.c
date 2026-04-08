@@ -1,10 +1,11 @@
 #include "ss_inhibit_safety_conditions.h"
 #include <stdio.h>
 #include <stdbool.h>
+#include "ss_operation.h"
 
 // Checks if all safety conditions are met to allow autostop based on the inclination angle, door status, seatbelt status, gear position, and whether the start-stop system is enabled.
-bool inhibit_safety_conditions( float InclinationAngle, bool DoorStatus, bool SeatbeltStatus, bool GearPosition, bool SS_Enabled ) {
-    if (InclinationAngle > 0.15f && GearPosition == 2 && DoorStatus == true && SeatbeltStatus == true && SS_Enabled == true) {
+bool inhibit_safety_conditions( float InclinationAngle, bool DoorStatus, bool SeatbeltStatus, SsGearPosition_t GearPosition, bool SS_Enabled ) {
+    if (InclinationAngle > 0.15f && GearPosition == SS_GEAR_N && DoorStatus == true && SeatbeltStatus == true && SS_Enabled == true) {
         return true;
     }
     return 0;
@@ -15,7 +16,6 @@ sr_state_t flipFlopState = {0}; // Initial state of the flip-flop
 //  Check if safe-stop is reachable
 bool standstill_management( bool AutoStopActive, bool BrakeStatus, bool DoorStatus, bool SeatbeltStatus ) {
     
-    static bool AutoStopActive_d = 0;
     static bool Q_d = 0;
 
     bool setValue = AutoStopActive && ( !DoorStatus || !SeatbeltStatus );
@@ -24,7 +24,6 @@ bool standstill_management( bool AutoStopActive, bool BrakeStatus, bool DoorStat
     bool Q = sr_flip_flop(setValue, resetValue, &flipFlopState);
     bool SafeStop = Q_d;
 
-    AutoStopActive_d = AutoStopActive;
     Q_d = Q;
 
     return SafeStop;
@@ -60,7 +59,7 @@ bool sr_flip_flop(bool S, bool R, sr_state_t * state) {
     return state->Q;
 }
 
-bool * ss_inhibit_wrapper(  float InclinationAngle, bool DoorStatus, bool SeatbeltStatus, bool GearPosition, bool SS_Enabled,
+bool * ss_inhibit_wrapper(  float InclinationAngle, bool DoorStatus, bool SeatbeltStatus, SsGearPosition_t GearPosition, bool SS_Enabled,
                         bool AutoStopActive, bool BrakeStatus,
                         bool IgnitionStatus, bool EngineStopRequest, float VehicleSpeed,
                         bool * retVal 
