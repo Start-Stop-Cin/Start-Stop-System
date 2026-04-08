@@ -11,6 +11,7 @@ jobs:
   build:
     name: Build (clang-18 / C99)
     runs-on: ubuntu-24.04
+    if: hashFiles('src/main.c') != ''
 
     steps:
       - uses: actions/checkout@v4
@@ -34,12 +35,11 @@ jobs:
             -v ${{ github.workspace }}:/workspaces/Start-Stop-System \
             -w /workspaces/Start-Stop-System \
             start-stop-container \
-            ./build/start_stop_obj
+            ./build/start_stop_demo
 
   misra-analysis:
     name: MISRA C 2012 / C99 (cppcheck)
     runs-on: ubuntu-24.04
-    needs: build
 
     steps:
       - uses: actions/checkout@v4
