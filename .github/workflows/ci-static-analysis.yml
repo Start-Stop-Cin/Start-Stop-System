@@ -1,0 +1,103 @@
+name: Static Analysis — MISRA C 2012 / C99
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build (clang-18 / C99)
+    runs-on: ubuntu-24.04
+    if: hashFiles('src/main.c') != ''
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build dev image
+        run: docker build -t start-stop-container .devcontainer/
+
+      - name: Compile
+        run: |
+          docker run --rm \
+            --user $(id -u):$(id -g) \
+            -v ${{ github.workspace }}:/workspaces/Start-Stop-System \
+            -w /workspaces/Start-Stop-System \
+            start-stop-container \
+            make build
+
+      - name: Run executable
+        run: |
+          docker run --rm \
+            --user $(id -u):$(id -g) \
+            -v ${{ github.workspace }}:/workspaces/Start-Stop-System \
+            -w /workspaces/Start-Stop-System \
+            start-stop-container \
+            ./build/start_stop_demo
+
+  misra-analysis:
+    name: MISRA C 2012 / C99 (cppcheck)
+    runs-on: ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build dev image
+        run: docker build -t start-stop-container .devcontainer/
+
+      - name: Show cppcheck version
+        run: docker run --rm start-stop-container cppcheck --version
+
+      - name: Run MISRA C 2012 analysis
+        id: cppcheck
+        run: |
+          docker run --rm \
+            --user $(id -u):$(id -g) \
+            -v ${{ github.workspace }}:/workspaces/Start-Stop-System \
+            -w /workspaces/Start-Stop-System \
+            start-stop-container \
+            make misra
+        continue-on-error: true
+
+      - name: Upload analysis report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cppcheck-misra-report
+          path: build/cppcheck-report.xml
+          if-no-files-found: ignore
+
+      - name: Write job summary
+        if: always()
+        run: |
+          echo "## MISRA C 2012 / C99 Static Analysis" >> "$GITHUB_STEP_SUMMARY"
+          if grep -q '<error ' build/cppcheck-report.xml 2>/dev/null; then
+            echo "**Violations found:**" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+            python3 - <<'PYEOF' >> "$GITHUB_STEP_SUMMARY"
+          import xml.etree.ElementTree as ET, sys
+          try:
+              tree = ET.parse("build/cppcheck-report.xml")
+              for err in tree.findall(".//error"):
+                  loc = err.find("location")
+                  file = loc.get("file", "?") if loc is not None else "?"
+                  line = loc.get("line", "?") if loc is not None else "?"
+                  msg  = err.get("msg", "")
+                  eid  = err.get("id", "")
+                  print(f"{file}:{line} [{eid}] {msg}")
+          except Exception as e:
+              print(f"Could not parse report: {e}", file=sys.stderr)
+          PYEOF
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "No violations found." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Fail on violations
+        if: steps.cppcheck.outcome == 'failure'
+        run: |
+          echo "MISRA C 2012 / C99 violations detected. See uploaded report."
+          exit 1
