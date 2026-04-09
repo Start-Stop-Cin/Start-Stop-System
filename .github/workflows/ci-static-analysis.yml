@@ -8,10 +8,21 @@ on:
   workflow_dispatch:
 
 jobs:
+  check-files:
+    name: Check required source files
+    runs-on: ubuntu-24.04
+    outputs:
+      has_main: ${{ steps.check.outputs.has_main }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: check
+        run: echo "has_main=$(test -f src/main.c && echo true || echo false)" >> "$GITHUB_OUTPUT"
+
   build:
     name: Build (clang-18 / C99 App)
     runs-on: ubuntu-24.04
-    if: hashFiles('src/main.c') != ''
+    needs: check-files
+    if: needs.check-files.outputs.has_main == 'true'
 
     steps:
       - uses: actions/checkout@v4
