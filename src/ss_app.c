@@ -5,11 +5,13 @@
 #include "ss_inhibit_safety_conditions.h"
 #include "ss_types.h"
 #include "co2.h"
+#include "ss_control.h"
 
 static bool g_prev_engine_stop_request = false;
 
 void SS_App_Init(void)
 {
+	SS_Init(); // Initalizes the Start Stop button debounce
     SS_Operation_Init();
     SS_Timer_Init();
 	Co2_Init();
@@ -19,7 +21,6 @@ void SS_App_Init(void)
 
 void SS_App_Run10ms_If(
     bool ignition_on,
-    bool ss_enable,
     float brake_pedal_position_pct,
     float accelerator_pedal_position_pct,
     int gear_position,
@@ -28,6 +29,10 @@ void SS_App_Run10ms_If(
     bool seatbelt_status,
     bool button_input,
     float inclination_angle_rad,
+    bool *ss_enable,
+    bool *hmi_led,
+    bool *led_update_cmd,
+    bool *button_rise_valid,
     bool *autostop_allowed,
     bool *safe_stop,
     bool *autostop_active,
@@ -51,8 +56,6 @@ void SS_App_Run10ms_If(
     bool autostop_allowed_local = false;
     bool safe_stop_local = false;
 
-    (void)button_input; /* ainda não usado nesta etapa */
-
     /*======================================================
      * 1. Build raw inputs
      *======================================================*/
@@ -66,13 +69,24 @@ void SS_App_Run10ms_If(
     raw.button_input = button_input;
     raw.inclination_angle_rad = inclination_angle_rad;
 
+	/*======================================================
+     * 2. Process button input
+     *======================================================*/
+
+	g_SS_Inputs.ButtonInput = button_input;
+	g_SS_Inputs.IgnitionStatus = ignition_on;
+
+	SS_Step();
+
+	bool ss_enable_local = g_SS_Outputs.SS_Enabled_Final;
+
     /*======================================================
-     * 2. Process raw inputs
+     * 3. Process raw inputs
      *======================================================*/
     SS_InputProc_Run(&raw, &proc);
 
     /*======================================================
-     * 3. Inhibit logic - preliminary conditions
+     * 4. Inhibit logic - preliminary conditions
      *    Drive cycle uses previous cycle engine stop request
      *======================================================*/
     safety_ok = inhibit_safety_conditions(
@@ -80,7 +94,7 @@ void SS_App_Run10ms_If(
         door_status,
         seatbelt_status,
         gear_position,
-        ss_enable);
+        ss_enable_local);
 
     drivecycle_ok = drivecycle_memory_block(
         ignition_on,
@@ -90,7 +104,7 @@ void SS_App_Run10ms_If(
     autostop_allowed_local = safety_ok && drivecycle_ok;
 
     /*======================================================
-    * 4. Safe stop based on CURRENT operation state
+    * 5. Safe stop based on CURRENT operation state
     *======================================================*/
     safe_stop_local = standstill_management(
     SS_Operation_IsAutoStopActiveState(),
@@ -100,10 +114,10 @@ void SS_App_Run10ms_If(
 
 
     /*======================================================
-     * 5. Build operation inputs
+     * 6. Build operation inputs
      *======================================================*/
     op_in.ignition_on = proc.ignition_on;
-    op_in.ss_enable = ss_enable;
+    op_in.ss_enable = ss_enable_local;
     op_in.autostop_allowed = autostop_allowed_local;
     op_in.brake_pressed = proc.brake_pressed;
     op_in.accelerator_pressed = proc.accelerator_pressed;
@@ -112,27 +126,27 @@ void SS_App_Run10ms_If(
     op_in.autostop_timeout_reached = SS_Timer_IsAutostopTimeoutReached();
 
     /*======================================================
-     * 6. Run operation module
+     * 7. Run operation module
      *======================================================*/
     SS_Operation_Run10ms(&op_in, &op_out, safe_stop_local);
 
     /*======================================================
-     * 7. Update timer with actual autostop state
+     * 8. Update timer with actual autostop state
      *======================================================*/
     SS_Timer_Run10ms(op_out.autostop_active);
 
 	/*======================================================
-     * 8. Run CO2 module to update avoided CO2 and display flags based on autostop state
+     * 9. Run CO2 module to update avoided CO2 and display flags based on autostop state
      *======================================================*/
 	Co2_Run10ms(op_in.ignition_on, op_out.autostop_active);
 
     /*======================================================
-     * 9. Save previous-cycle signals needed by memory blocks
+     * 10. Save previous-cycle signals needed by memory blocks
      *======================================================*/
     g_prev_engine_stop_request = op_out.engine_stop_request;
 
     /*======================================================
-     * 10. Outputs to Simulink
+     * 11. Outputs to Simulink
      *======================================================*/
     if (autostop_allowed != 0)
     {
@@ -194,4 +208,24 @@ void SS_App_Run10ms_If(
     {
         *hide_co2 = Co2_HideEnabled();
     }
+
+	if (ss_enable != 0)
+	{
+		*ss_enable = g_SS_Outputs.SS_Enabled_Final;
+	}
+
+	if (hmi_led != 0)
+	{
+		*hmi_led = g_SS_Outputs.HMI_LED;
+	}
+
+	if (led_update_cmd != 0)
+	{
+		*led_update_cmd = g_SS_Outputs.LED_Update_Cmd;
+	}
+
+	if (button_rise_valid != 0)
+	{
+		*button_rise_valid = g_SS_Outputs.Button_Rise_Valid;
+	}
 }

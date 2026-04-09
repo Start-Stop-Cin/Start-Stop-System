@@ -7,7 +7,6 @@ void SS_App_Init(void);
 
 void SS_App_Run10ms_If(
     bool ignition_on,
-    bool ss_enable,
     float brake_pedal_position_pct,
     float accelerator_pedal_position_pct,
     int gear_position,
@@ -16,6 +15,10 @@ void SS_App_Run10ms_If(
     bool seatbelt_status,
     bool button_input,
     float inclination_angle_rad,
+    bool *ss_enable,
+    bool *hmi_led,
+    bool *led_update_cmd,
+    bool *button_rise_valid,
     bool *autostop_allowed,
     bool *safe_stop,
     bool *autostop_active,
