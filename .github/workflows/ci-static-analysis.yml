@@ -1,4 +1,4 @@
-name: Static Analysis — MISRA C 2012 / C99
+name: CI - Build, Format and MISRA
 
 on:
   push:
@@ -8,10 +8,25 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
-    name: Build (clang-18 / C99)
+  check-files:
+    name: Check required source files
     runs-on: ubuntu-24.04
-    if: hashFiles('src/main.c') != ''
+    outputs:
+      has_main: ${{ steps.check.outputs.has_main }}
+      has_sources: ${{ steps.check.outputs.has_sources }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: check
+        run: |
+          echo "has_main=$(test -f src/main.c && echo true || echo false)" >> "$GITHUB_OUTPUT"
+          SRC_COUNT=$(find src include -name '*.c' -o -name '*.h' 2>/dev/null | head -1 | wc -l)
+          echo "has_sources=$([ "$SRC_COUNT" -gt 0 ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+
+  build:
+    name: Build (clang-18 / C99 App)
+    runs-on: ubuntu-24.04
+    needs: check-files
+    if: needs.check-files.outputs.has_main == 'true'
 
     steps:
       - uses: actions/checkout@v4
@@ -37,9 +52,32 @@ jobs:
             start-stop-container \
             ./build/start_stop_demo
 
-  misra-analysis:
-    name: MISRA C 2012 / C99 (cppcheck)
+  format-check:
+    name: Format Check (clang-format)
     runs-on: ubuntu-24.04
+    needs: check-files
+    if: needs.check-files.outputs.has_sources == 'true'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build dev image
+        run: docker build -t start-stop-container .devcontainer/
+
+      - name: Run format check
+        run: |
+          docker run --rm \
+            --user $(id -u):$(id -g) \
+            -v ${{ github.workspace }}:/workspaces/Start-Stop-System \
+            -w /workspaces/Start-Stop-System \
+            start-stop-container \
+            make format-check
+
+  misra-analysis:
+    name: Static Analysis (MISRA C 2012 / cppcheck)
+    runs-on: ubuntu-24.04
+    needs: check-files
+    if: needs.check-files.outputs.has_sources == 'true'
 
     steps:
       - uses: actions/checkout@v4
