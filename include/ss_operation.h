@@ -35,6 +35,9 @@ typedef struct
 
 // Function prototypes for the start-stop system operation
 void SS_Operation_Init(void); // Initializes the start-stop system operation module
-void SS_Operation_Run10ms(const SsOperationInputs_t *inputs, SsOperationOutputs_t *outputs); // Runs the start-stop system operation logic every 10ms based on the provided inputs and updates the outputs accordingly
+void SS_Operation_Run10ms(const SsOperationInputs_t *inputs, SsOperationOutputs_t *outputs, bool safe_stop); // Runs the start-stop system operation logic every 10ms based on the provided inputs and updates the outputs accordingly
+
+SsOperationState_t SS_Operation_GetState(void);
+bool SS_Operation_IsAutoStopActiveState(void);
 
 #endif
