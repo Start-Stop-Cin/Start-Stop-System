@@ -1,5 +1,5 @@
 #include "co2.h"
-#include "co2_calib.h"
+#include "ss_calib.h"
 
 static uint32_t g_autostop_accumulated_time_ms =
     0U; //  Global variable to track the accumulated autostop time in
@@ -45,14 +45,14 @@ void Co2_Run10ms(bool ignition_on, bool autostop_active) {
 	else {
 		if (autostop_active == true) {
 			g_autostop_accumulated_time_ms +=
-			    TASK_PERIOD_MS; // Increment the accumulated autostop time by
+			    SS_TASK_PERIOD_MS; // Increment the accumulated autostop time by
 			// the task period (10ms) each time this
 			// function is called while autostop is active
 		}
 
 		g_co2_avoided_g =
 		    ((float)g_autostop_accumulated_time_ms / 1000.0f) *
-		    CO2_WLTP_IDLE_FACTOR; // Convert accumulated time from milliseconds
+		    SS_CO2_WLTP_IDLE_FACTOR; // Convert accumulated time from milliseconds
 		// to seconds and multiply by the WLTP idle
 		// factor to get the avoided CO2 in grams
 

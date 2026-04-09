@@ -4,6 +4,7 @@
 #include "ss_input_proc.h"
 #include "ss_inhibit_safety_conditions.h"
 #include "ss_types.h"
+#include "co2.h"
 
 static bool g_prev_engine_stop_request = false;
 
@@ -11,6 +12,7 @@ void SS_App_Init(void)
 {
     SS_Operation_Init();
     SS_Timer_Init();
+	Co2_Init();
 
     g_prev_engine_stop_request = false;
 }
@@ -33,7 +35,11 @@ void SS_App_Run10ms_If(
     bool *engine_restart_request,
     int *state,
     unsigned int *autostop_event_time_ms,
-    bool *autostop_timeout_reached)
+    bool *autostop_timeout_reached,
+    unsigned int *autostop_accumulated_time_ms,
+    float *co2_avoided_g,
+    bool *display_co2,
+    bool *hide_co2)
 {
     SsRawInputs_t raw;
     SsProcessedInputs_t proc;
@@ -115,13 +121,18 @@ void SS_App_Run10ms_If(
      *======================================================*/
     SS_Timer_Run10ms(op_out.autostop_active);
 
+	/*======================================================
+     * 8. Run CO2 module to update avoided CO2 and display flags based on autostop state
+     *======================================================*/
+	Co2_Run10ms(op_in.ignition_on, op_out.autostop_active);
+
     /*======================================================
-     * 8. Save previous-cycle signals needed by memory blocks
+     * 9. Save previous-cycle signals needed by memory blocks
      *======================================================*/
     g_prev_engine_stop_request = op_out.engine_stop_request;
 
     /*======================================================
-     * 9. Outputs to Simulink
+     * 10. Outputs to Simulink
      *======================================================*/
     if (autostop_allowed != 0)
     {
@@ -161,5 +172,26 @@ void SS_App_Run10ms_If(
     if (autostop_timeout_reached != 0)
     {
         *autostop_timeout_reached = SS_Timer_IsAutostopTimeoutReached();
+    }
+
+	 if (autostop_accumulated_time_ms != 0)
+    {
+        *autostop_accumulated_time_ms =
+            Co2_GetAccumulatedAutoStopTimeMs();
+    }
+
+    if (co2_avoided_g != 0)
+    {
+        *co2_avoided_g = Co2_GetAvoidedGrams();
+    }
+
+    if (display_co2 != 0)
+    {
+        *display_co2 = Co2_DisplayEnabled();
+    }
+
+    if (hide_co2 != 0)
+    {
+        *hide_co2 = Co2_HideEnabled();
     }
 }

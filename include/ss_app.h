@@ -23,6 +23,10 @@ void SS_App_Run10ms_If(
     bool *engine_restart_request,
     int *state,
     unsigned int *autostop_event_time_ms,
-    bool *autostop_timeout_reached);
+    bool *autostop_timeout_reached,
+    unsigned int *autostop_accumulated_time_ms,
+    float *co2_avoided_g,
+    bool *display_co2,
+    bool *hide_co2);
 
 #endif

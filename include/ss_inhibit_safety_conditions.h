@@ -2,6 +2,7 @@
 #define SS_INHIBIT_SAFETY_CONDITIONS_H
 
 #include <stdbool.h>
+#include <ss_types.h>
 
 bool inhibit_safety_conditions( float InclinationAngle, bool DoorStatus, bool SeatbeltStatus, SsGearPosition_t GearPosition, bool SS_Enabled );
 
