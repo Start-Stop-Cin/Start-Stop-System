@@ -1,9 +1,11 @@
 #include "ClusterBackend.h"
 #include <QNetworkDatagram>
+#include <QUdpSocket>
 #include <QDebug>
 
 ClusterBackend::ClusterBackend(QObject *parent) : QObject(parent) {
 	udpSocket = new QUdpSocket(this);
+	// Bind na porta 55000 para receber os dados do Simulink
 	udpSocket->bind(QHostAddress::AnyIPv4, 55000);
 	connect(udpSocket, &QUdpSocket::readyRead, this, &ClusterBackend::readPendingDatagrams);
 }
@@ -13,28 +15,15 @@ void ClusterBackend::readPendingDatagrams() {
 		QNetworkDatagram datagram = udpSocket->receiveDatagram();
 		QByteArray data = datagram.data();
 
+		// Verifica se o pacote tem o tamanho esperado (15 doubles = 120 bytes)
 		if (data.size() >= 15 * sizeof(double)) {
 			double *values = reinterpret_cast<double*>(data.data());
 
-			qDebug() << "------------------------------------------";
-			qDebug() << "PACOTE RECEBIDO (" << data.size() << " bytes):";
-			qDebug() << "[0] Velocidade:      " << values[0];
-			qDebug() << "[1] Gear Input:      " << values[1];
-			qDebug() << "[2] Door Open:       " << values[2];
-			qDebug() << "[3] Seatbelt Unf.:   " << values[3];
-			qDebug() << "[4] SafeStop Alert:  " << values[4];
-			qDebug() << "[5] Show CO2:        " << values[5];
-			qDebug() << "[6] CO2 Saved:       " << values[6];
-			qDebug() << "[7] Show Fuel:       " << values[7];
-			qDebug() << "[8] Fuel Saved:      " << values[8];
-			qDebug() << "[9] SS Status Input: " << values[9];
-			qDebug() << "[10] SS Enable:      " << values[10];
-			qDebug() << "[11] Autostop Active:" << values[11];
-			qDebug() << "[12] Autostop Allowed:" << values[12];
-			qDebug() << "[13] RPM:            " << values[13];
-			qDebug() << "[14] HMI LED:        " << values[14];
-			qDebug() << "------------------------------------------";
+			/* COMENTADO PARA EVITAR TRAVAMENTO DA GUI (Não Respondendo)
+			   Imprimir muitas mensagens no console trava a interface no Windows.
+			*/
 
+			// Atualização dos sinais para a interface QML
 			updateValue(m_currentSpeed, values[0], &ClusterBackend::currentSpeedChanged);
 			updateValue(m_gearInput, values[1], &ClusterBackend::gearInputChanged);
 			updateValue(m_doorOpen, values[2], &ClusterBackend::doorOpenChanged);
@@ -52,7 +41,7 @@ void ClusterBackend::readPendingDatagrams() {
 			updateValue(m_hmi_led, values[14], &ClusterBackend::hmi_ledChanged);
 
 		} else {
-			qDebug() << "FALHA: Pacote recebido com problema de estrutura. Tamanho:" << data.size();
+			qDebug() << "FALHA: Pacote com tamanho incorreto:" << data.size();
 		}
 	}
 }
