@@ -13,8 +13,7 @@ void ClusterBackend::readPendingDatagrams() {
 		QNetworkDatagram datagram = udpSocket->receiveDatagram();
 		QByteArray data = datagram.data();
 
-		// Agora esperamos 12 elementos (índices 0 a 11)
-		if (data.size() >= 12 * sizeof(double)) {
+		if (data.size() >= 15 * sizeof(double)) {
 			double *values = reinterpret_cast<double*>(data.data());
 
 			qDebug() << "------------------------------------------";
@@ -32,6 +31,8 @@ void ClusterBackend::readPendingDatagrams() {
 			qDebug() << "[10] SS Enable:      " << values[10];
 			qDebug() << "[11] Autostop Active:" << values[11];
 			qDebug() << "[12] Autostop Allowed:" << values[12];
+			qDebug() << "[13] RPM:            " << values[13];
+			qDebug() << "[14] HMI LED:        " << values[14];
 			qDebug() << "------------------------------------------";
 
 			updateValue(m_currentSpeed, values[0], &ClusterBackend::currentSpeedChanged);
@@ -47,6 +48,8 @@ void ClusterBackend::readPendingDatagrams() {
 			updateValue(m_ss_Enable, values[10], &ClusterBackend::ss_EnableChanged);
 			updateValue(m_autostopActive, values[11], &ClusterBackend::autostopActiveChanged);
 			updateValue(m_autostopAllowed, values[12], &ClusterBackend::autostopAllowedChanged);
+			updateValue(m_currentRpm, values[13], &ClusterBackend::currentRpmChanged);
+			updateValue(m_hmi_led, values[14], &ClusterBackend::hmi_ledChanged);
 
 		} else {
 			qDebug() << "FALHA: Pacote recebido com problema de estrutura. Tamanho:" << data.size();

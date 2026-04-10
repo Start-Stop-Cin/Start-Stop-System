@@ -41,10 +41,13 @@ Window {
     // =========================================================================
     property real currentSpeed: Backend.currentSpeed
     property int gearInput: Backend.gearInput
-    property int currentRpm: currentSpeed * 30
+    property real currentRpm: Backend.currentRpm
     property double ss_Enable: Backend.ss_Enable
     property double autostopActive: Backend.autostopActive
     property double autostopAllowed: Backend.autostopAllowed
+
+    // --- NOVO: Conexão da variável do LED ---
+    property double hmi_led: Backend.hmi_led
 
     property string clock: "12:36"
     property int hodometer: 153879
@@ -214,7 +217,7 @@ Window {
             y: parent.height / 2 - height
             transformOrigin: Item.Bottom
             rotation: -130 + (rootCluster.currentRpm / 7000) * 260
-            Behavior on rotation { SpringAnimation { spring: 2; damping: 0.2 } }
+            Behavior on rotation { SpringAnimation { spring: 1; damping: 0.3 } }
         }
 
         Rectangle {
@@ -280,7 +283,7 @@ Window {
             anchors.bottomMargin: 5
             anchors.horizontalCenter: parent.horizontalCenter
             text: "Fuel Saved: " + rootCluster.fuel_Saved.toFixed(3) + " ml"
-            color: "#2196F3" // Cor azul para diferenciar
+            color: "#2196F3"
             font.pixelSize: 10
             font.bold: true
             opacity: rootCluster.show_Fuel ? 1.0 : 0.0
@@ -406,7 +409,7 @@ Window {
             y: parent.height / 2 - height
             transformOrigin: Item.Bottom
             rotation: -130 + (rootCluster.currentSpeed / 240) * 260
-            Behavior on rotation { SpringAnimation { spring: 2; damping: 0.2 } }
+            Behavior on rotation { SpringAnimation { spring: 1; damping: 0.3 } }
         }
 
         Rectangle {
@@ -470,7 +473,7 @@ Window {
                 anchors.fill: parent; source: rootCluster.ssPopupSource; visible: rootCluster.ssPopupSource !== ""; fillMode: Image.PreserveAspectFit
             }
 
-            // Estados do Sistema (exibidos apenas se não houver popup ativo)
+            // Estados do Sistema
             Image {
                 source: "images/state6.jpeg";
                 anchors.fill: parent;
@@ -484,6 +487,37 @@ Window {
                 visible: rootCluster.ssPopupSource === "" && rootCluster.autostopAllowed === 0 && rootCluster.autostopActive === 0 && rootCluster.ss_Enable === 1
                 fillMode: Image.PreserveAspectFit
             }
+        }
+    }
+
+    // =========================================================================
+    // INDICADOR HMI LED (Start Stop Disabled)
+    // =========================================================================
+    Row {
+        id: hmiLedIndicator
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
+        anchors.bottomMargin: 15
+        anchors.rightMargin: 15
+        spacing: 8
+        opacity: 0.6
+        visible: rootCluster.hmi_led === 1
+
+        Rectangle {
+            width: 10
+            height: 10
+            radius: 5
+            color: "#ff3333"
+            anchors.verticalCenter: parent.verticalCenter
+            border.color: "#8b0000"
+            border.width: 1
+        }
+
+        Text {
+            text: "Start Stop Disabled"
+            color: rootCluster.themeTextSecondary
+            font.pixelSize: 11
+            anchors.verticalCenter: parent.verticalCenter
         }
     }
 }
