@@ -22,6 +22,7 @@ class ClusterBackend : public QObject {
 	Q_PROPERTY(double ssStatusInput READ ssStatusInput NOTIFY ssStatusInputChanged)
 	Q_PROPERTY(double ss_Enable READ ss_Enable NOTIFY ss_EnableChanged)
 	Q_PROPERTY(double autostopActive READ autostopActive NOTIFY autostopActiveChanged)
+	Q_PROPERTY(double autostopAllowed READ autostopAllowed NOTIFY autostopAllowedChanged)
 
   public:
 	explicit ClusterBackend(QObject *parent = nullptr);
@@ -38,6 +39,7 @@ class ClusterBackend : public QObject {
 	double ssStatusInput() const { return m_ssStatusInput; }
 	double ss_Enable() const { return m_ss_Enable; }
 	double autostopActive() const { return m_autostopActive; }
+	double autostopAllowed() const { return m_autostopAllowed; }
 
   signals:
 	void currentSpeedChanged();
@@ -52,6 +54,7 @@ class ClusterBackend : public QObject {
 	void ssStatusInputChanged();
 	void ss_EnableChanged();
 	void autostopActiveChanged();
+	void autostopAllowedChanged();
 
   private slots:
 	void readPendingDatagrams();
@@ -71,6 +74,7 @@ class ClusterBackend : public QObject {
 	double m_ssStatusInput = 0;
 	double m_ss_Enable = 0;
 	double m_autostopActive = 0;
+	double m_autostopAllowed = 0;
 
 	template <typename Signal>
 	void updateValue(double &member, double newValue, Signal signal) {

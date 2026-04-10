@@ -7,12 +7,12 @@ int main(int argc, char *argv[])
 {
 	QGuiApplication app(argc, argv);
 
-	// Instancia o nosso backend de comunicação
+	// Instancia backend de comunicação
 	ClusterBackend backend;
 
 	QQmlApplicationEngine engine;
 
-	// Expõe a classe C++ para o QML com o nome "Backend"
+	// Expõe classe C++ para o QML com o nome "Backend"
 	engine.rootContext()->setContextProperty("Backend", &backend);
 
 	// Caminho da interface simplificado

@@ -44,6 +44,7 @@ Window {
     property int currentRpm: currentSpeed * 30
     property double ss_Enable: Backend.ss_Enable
     property double autostopActive: Backend.autostopActive
+    property double autostopAllowed: Backend.autostopAllowed
 
     property string clock: "12:36"
     property int hodometer: 153879
@@ -55,9 +56,11 @@ Window {
     property int ssStatusInput: Backend.ssStatusInput
     property bool safeStopAlertActive: Backend.safeStopAlertActive
 
-    // VARIÁVEIS DO SIMULINK (CO2)
+    // VARIÁVEIS DO SIMULINK (CO2 e Combustível)
     property bool show_CO2: Backend.show_CO2
     property real co2_Saved: Backend.co2_Saved
+    property bool show_Fuel: Backend.show_Fuel
+    property real fuel_Saved: Backend.fuel_Saved
 
     // LÓGICA DO TEMPORIZADOR SS_ENABLE
     property string ssPopupSource: ""
@@ -76,7 +79,7 @@ Window {
     }
 
     // =========================================================================
-    // BARRA SUPERIOR: INDICADOR DE MARCHA (ORDEM PRND CORRIGIDA)
+    // BARRA SUPERIOR: INDICADOR DE MARCHA
     // =========================================================================
     Item {
         id: gearPositionIndicator
@@ -245,7 +248,7 @@ Window {
     }
 
     // =========================================================================
-    // ÁREA CENTRAL: VELOCÍMETRO DIGITAL, HODÔMETRO E CO2
+    // ÁREA CENTRAL: VELOCÍMETRO DIGITAL, HODÔMETRO, CO2 E COMBUSTÍVEL
     // =========================================================================
     Item {
         id: centerInfoContainer
@@ -272,13 +275,27 @@ Window {
         }
 
         Text {
+            id: fuelMessage
+            anchors.bottom: co2Message.top
+            anchors.bottomMargin: 5
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: "Fuel Saved: " + rootCluster.fuel_Saved.toFixed(3) + " ml"
+            color: "#2196F3" // Cor azul para diferenciar
+            font.pixelSize: 10
+            font.bold: true
+            opacity: rootCluster.show_Fuel ? 1.0 : 0.0
+            visible: opacity > 0
+            Behavior on opacity { NumberAnimation { duration: 400 } }
+        }
+
+        Text {
             id: co2Message
             anchors.bottom: centerOdometer.top
             anchors.bottomMargin: 10
             anchors.horizontalCenter: parent.horizontalCenter
             text: "CO₂ Economy: " + rootCluster.co2_Saved.toFixed(1) + " g"
             color: "#4CAF50"
-            font.pixelSize: 14
+            font.pixelSize: 10
             font.bold: true
             opacity: rootCluster.show_CO2 ? 1.0 : 0.0
             visible: opacity > 0
@@ -454,8 +471,19 @@ Window {
             }
 
             // Estados do Sistema (exibidos apenas se não houver popup ativo)
-            Image { source: "images/state6.jpeg"; anchors.fill: parent; visible: rootCluster.ssPopupSource === "" && rootCluster.autostopActive === 1; fillMode: Image.PreserveAspectFit }
+            Image {
+                source: "images/state6.jpeg";
+                anchors.fill: parent;
+                visible: rootCluster.ssPopupSource === "" && rootCluster.autostopActive === 1;
+                fillMode: Image.PreserveAspectFit
+            }
 
+            Image {
+                source: "images/state3.jpeg"
+                anchors.fill: parent
+                visible: rootCluster.ssPopupSource === "" && rootCluster.autostopAllowed === 0 && rootCluster.autostopActive === 0 && rootCluster.ss_Enable === 1
+                fillMode: Image.PreserveAspectFit
+            }
         }
     }
 }
