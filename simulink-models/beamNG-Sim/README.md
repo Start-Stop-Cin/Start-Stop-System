@@ -20,4 +20,5 @@ https://github.com/user-attachments/assets/8f917b70-9e52-4892-8204-16a846267783
 
 ### SIL integration to BeamNG simulator
 
-https://github.com/user-attachments/assets/3cb255d9-0beb-4bfb-a619-88c2fe92f2f4
+[![Vídeo demonstração](https://github.com/user-attachments/assets/815ac0e5-e1ee-41d8-a525-569fe251d49e)](https://drive.google.com/file/d/1gk0PNEK8OuH7OBEmS789syrs1wmj1T1r/view)
+
