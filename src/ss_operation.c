@@ -91,7 +91,7 @@ void SS_Operation_Init(void)
 
 
 // Runs the start-stop system operation logic every 10ms based on the provided inputs and updates the outputs accordingly
-void SS_Operation_Run10ms(const SsOperationInputs_t *inputs, SsOperationOutputs_t *outputs)
+void SS_Operation_Run10ms(const SsOperationInputs_t *inputs, SsOperationOutputs_t *outputs, bool safe_stop)
 {
     if ((inputs == 0) || (outputs == 0))
     {
@@ -137,7 +137,7 @@ void SS_Operation_Run10ms(const SsOperationInputs_t *inputs, SsOperationOutputs_
             {
                 g_ss_op_state = SS_OP_STATE_VEHICLE_OFF;
             }
-            else if (SS_IsRestartConditionMet(inputs) == true)
+            else if ( (SS_IsRestartConditionMet(inputs) == true) && (safe_stop == false) )
             {
                 outputs->engine_restart_request = true;
                 g_ss_op_state = SS_OP_STATE_ENGINE_RUNNING;
@@ -155,3 +155,13 @@ void SS_Operation_Run10ms(const SsOperationInputs_t *inputs, SsOperationOutputs_
     outputs->state = g_ss_op_state;
     outputs->autostop_active = (g_ss_op_state == SS_OP_STATE_AUTOSTOP_ACTIVE);
 } 
+
+SsOperationState_t SS_Operation_GetState(void)
+{
+    return g_ss_op_state;
+}
+
+bool SS_Operation_IsAutoStopActiveState(void)
+{
+    return (g_ss_op_state == SS_OP_STATE_AUTOSTOP_ACTIVE);
+}
