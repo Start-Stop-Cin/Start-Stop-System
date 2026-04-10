@@ -6,6 +6,7 @@
 #include "ss_types.h"
 #include "co2.h"
 #include "ss_control.h"
+#include "ss_fuel.h"
 
 static bool g_prev_engine_stop_request = false;
 
@@ -15,6 +16,7 @@ void SS_App_Init(void)
     SS_Operation_Init();
     SS_Timer_Init();
 	Co2_Init();
+	SS_Fuel_Init();
 
     g_prev_engine_stop_request = false;
 }
@@ -44,7 +46,11 @@ void SS_App_Run10ms_If(
     unsigned int *autostop_accumulated_time_ms,
     float *co2_avoided_g,
     bool *display_co2,
-    bool *hide_co2)
+    bool *hide_co2,
+	unsigned int *autostop_accumulated_time_ms_fuel,
+    float *fuel_saved_l,
+    bool *display_fuel,
+    bool *hide_fuel)
 {
     SsRawInputs_t raw;
     SsProcessedInputs_t proc;
@@ -140,6 +146,8 @@ void SS_App_Run10ms_If(
      *======================================================*/
 	Co2_Run10ms(op_in.ignition_on, op_out.autostop_active);
 
+	SS_Fuel_Run10ms(op_in.ignition_on, op_out.autostop_active);
+
     /*======================================================
      * 10. Save previous-cycle signals needed by memory blocks
      *======================================================*/
@@ -228,4 +236,25 @@ void SS_App_Run10ms_If(
 	{
 		*button_rise_valid = g_SS_Outputs.Button_Rise_Valid;
 	}
+
+	    if (autostop_accumulated_time_ms_fuel != 0)
+    {
+        *autostop_accumulated_time_ms_fuel =
+            SS_Fuel_GetAccumulatedAutoStopTimeMs();
+    }
+
+    if (fuel_saved_l != 0)
+    {
+        *fuel_saved_l = SS_Fuel_GetSavedLiters();
+    }
+
+    if (display_fuel != 0)
+    {
+        *display_fuel = SS_Fuel_DisplayEnabled();
+    }
+
+    if (hide_fuel != 0)
+    {
+        *hide_fuel = SS_Fuel_HideEnabled();
+    }
 }

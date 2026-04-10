@@ -30,6 +30,10 @@ void SS_App_Run10ms_If(
     unsigned int *autostop_accumulated_time_ms,
     float *co2_avoided_g,
     bool *display_co2,
-    bool *hide_co2);
+    bool *hide_co2,
+	unsigned int *autostop_accumulated_time_ms_fuel,
+    float *fuel_saved_l,
+    bool *display_fuel,
+    bool *hide_fuel);
 
 #endif
