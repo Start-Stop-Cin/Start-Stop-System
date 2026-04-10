@@ -4,8 +4,6 @@
 
 ClusterBackend::ClusterBackend(QObject *parent) : QObject(parent) {
 	udpSocket = new QUdpSocket(this);
-
-	// Forçando a escutar a rede IPv4 na porta 55000
 	udpSocket->bind(QHostAddress::AnyIPv4, 55000);
 	connect(udpSocket, &QUdpSocket::readyRead, this, &ClusterBackend::readPendingDatagrams);
 }
@@ -15,11 +13,10 @@ void ClusterBackend::readPendingDatagrams() {
 		QNetworkDatagram datagram = udpSocket->receiveDatagram();
 		QByteArray data = datagram.data();
 
-		// Verifica se recebemos pelo menos 10 doubles (80 bytes)
-		if (data.size() >= 10 * sizeof(double)) {
+		// Ajustado para 12 elementos (0 a 11)
+		if (data.size() >= 12 * sizeof(double)) {
 			double *values = reinterpret_cast<double*>(data.data());
 
-			// DEBUG COMPLETO: Imprime todos os dados no Application Output
 			qDebug() << "------------------------------------------";
 			qDebug() << "PACOTE RECEBIDO (" << data.size() << " bytes):";
 			qDebug() << "[0] Velocidade:      " << values[0];
@@ -32,11 +29,12 @@ void ClusterBackend::readPendingDatagrams() {
 			qDebug() << "[7] Show Fuel:       " << values[7];
 			qDebug() << "[8] Fuel Saved:      " << values[8];
 			qDebug() << "[9] SS Status Input: " << values[9];
+			qDebug() << "[10] SS Enable:      " << values[10];
+			qDebug() << "[11] Autostop Active:" << values[11];
 			qDebug() << "------------------------------------------";
 
-			// Atualiza os valores baseado na ordem do Mux no Simulink
 			updateValue(m_currentSpeed, values[0], &ClusterBackend::currentSpeedChanged);
-			updateValue(m_gearInput, static_cast<int>(values[1]), &ClusterBackend::gearInputChanged);
+			updateValue(m_gearInput, values[1], &ClusterBackend::gearInputChanged);
 			updateValue(m_doorOpen, values[2], &ClusterBackend::doorOpenChanged);
 			updateValue(m_seatbeltUnfastened, values[3], &ClusterBackend::seatbeltUnfastenedChanged);
 			updateValue(m_safeStopAlertActive, values[4], &ClusterBackend::safeStopAlertActiveChanged);
@@ -44,9 +42,11 @@ void ClusterBackend::readPendingDatagrams() {
 			updateValue(m_co2_Saved, values[6], &ClusterBackend::co2_SavedChanged);
 			updateValue(m_show_Fuel, values[7], &ClusterBackend::show_FuelChanged);
 			updateValue(m_fuel_Saved, values[8], &ClusterBackend::fuel_SavedChanged);
-			updateValue(m_ssStatusInput, static_cast<int>(values[9]), &ClusterBackend::ssStatusInputChanged);
+			updateValue(m_ssStatusInput, values[9], &ClusterBackend::ssStatusInputChanged);
+			updateValue(m_ss_Enable, values[10], &ClusterBackend::ss_EnableChanged);
+			updateValue(m_autostopActive, values[11], &ClusterBackend::autostopActiveChanged);
+
 		} else {
-			// Se o pacote chegar mas for do tamanho errado, ele avisa
 			qDebug() << "Recebi um pacote, mas o tamanho esta errado. Tamanho:" << data.size();
 		}
 	}

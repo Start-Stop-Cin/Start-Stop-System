@@ -42,6 +42,8 @@ Window {
     property real currentSpeed: Backend.currentSpeed
     property int gearInput: Backend.gearInput
     property int currentRpm: currentSpeed * 30
+    property double ss_Enable: Backend.ss_Enable
+    property double autostopActive: Backend.autostopActive
 
     property string clock: "12:36"
     property int hodometer: 153879
@@ -56,6 +58,22 @@ Window {
     // VARIÁVEIS DO SIMULINK (CO2)
     property bool show_CO2: Backend.show_CO2
     property real co2_Saved: Backend.co2_Saved
+
+    // LÓGICA DO TEMPORIZADOR SS_ENABLE
+    property string ssPopupSource: ""
+    Timer {
+        id: ssPopupTimer
+        interval: 3000
+        onTriggered: ssPopupSource = ""
+    }
+
+    Connections {
+        target: Backend
+        function onSs_EnableChanged() {
+            ssPopupSource = (Backend.ss_Enable === 1) ? "images/state4.jpeg" : "images/state5.jpeg"
+            ssPopupTimer.restart()
+        }
+    }
 
     // =========================================================================
     // BARRA SUPERIOR: INDICADOR DE MARCHA (ORDEM PRND CORRIGIDA)
@@ -404,7 +422,7 @@ Window {
     }
 
     // =========================================================================
-    // BARRA INFERIOR: LUZES DE AVISO (LÓGICA INVERTIDA CORRIGIDA)
+    // BARRA INFERIOR: LUZES DE AVISO (LÓGICA PRIORITÁRIA INTEGRADA)
     // =========================================================================
     Row {
         id: bottomIndicatorRow
@@ -417,7 +435,6 @@ Window {
             width: 50; height: 50
             source: "images/state1.jpeg" // Porta
             fillMode: Image.PreserveAspectFit
-            // Invertido com o operador '!' para que a luz acenda no erro
             visible: !rootCluster.doorOpen
         }
 
@@ -425,16 +442,20 @@ Window {
             width: 50; height: 50
             source: "images/state2.jpeg" // Cinto
             fillMode: Image.PreserveAspectFit
-            // Invertido com o operador '!' para que a luz acenda no erro
             visible: !rootCluster.seatbeltUnfastened
         }
 
         Item {
             width: 50; height: 50
-            Image { source: "images/state6.jpeg"; anchors.fill: parent; visible: rootCluster.ssStatusInput === 1; fillMode: Image.PreserveAspectFit }
-            Image { source: "images/state5.jpeg"; anchors.fill: parent; visible: rootCluster.ssStatusInput === 2; fillMode: Image.PreserveAspectFit }
-            Image { source: "images/state3.jpeg"; anchors.fill: parent; visible: rootCluster.ssStatusInput === 3; fillMode: Image.PreserveAspectFit }
-            Image { source: "images/state4.jpeg"; anchors.fill: parent; visible: rootCluster.ssStatusInput === 4; fillMode: Image.PreserveAspectFit }
+
+            // Prioridade: Popup de Enable/Disable
+            Image {
+                anchors.fill: parent; source: rootCluster.ssPopupSource; visible: rootCluster.ssPopupSource !== ""; fillMode: Image.PreserveAspectFit
+            }
+
+            // Estados do Sistema (exibidos apenas se não houver popup ativo)
+            Image { source: "images/state6.jpeg"; anchors.fill: parent; visible: rootCluster.ssPopupSource === "" && rootCluster.autostopActive === 1; fillMode: Image.PreserveAspectFit }
+
         }
     }
 }

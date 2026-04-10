@@ -10,7 +10,6 @@ class ClusterBackend : public QObject {
 	QML_ELEMENT
 	QML_SINGLETON
 
-	// Propriedades expostas para o QML
 	Q_PROPERTY(double currentSpeed READ currentSpeed NOTIFY currentSpeedChanged)
 	Q_PROPERTY(double gearInput READ gearInput NOTIFY gearInputChanged)
 	Q_PROPERTY(double doorOpen READ doorOpen NOTIFY doorOpenChanged)
@@ -21,11 +20,12 @@ class ClusterBackend : public QObject {
 	Q_PROPERTY(double show_Fuel READ show_Fuel NOTIFY show_FuelChanged)
 	Q_PROPERTY(double fuel_Saved READ fuel_Saved NOTIFY fuel_SavedChanged)
 	Q_PROPERTY(double ssStatusInput READ ssStatusInput NOTIFY ssStatusInputChanged)
+	Q_PROPERTY(double ss_Enable READ ss_Enable NOTIFY ss_EnableChanged)
+	Q_PROPERTY(double autostopActive READ autostopActive NOTIFY autostopActiveChanged)
 
   public:
 	explicit ClusterBackend(QObject *parent = nullptr);
 
-	// Getters
 	double currentSpeed() const { return m_currentSpeed; }
 	double gearInput() const { return m_gearInput; }
 	double doorOpen() const { return m_doorOpen; }
@@ -36,9 +36,10 @@ class ClusterBackend : public QObject {
 	double show_Fuel() const { return m_show_Fuel; }
 	double fuel_Saved() const { return m_fuel_Saved; }
 	double ssStatusInput() const { return m_ssStatusInput; }
+	double ss_Enable() const { return m_ss_Enable; }
+	double autostopActive() const { return m_autostopActive; }
 
   signals:
-	// Sinais emitidos quando o valor muda
 	void currentSpeedChanged();
 	void gearInputChanged();
 	void doorOpenChanged();
@@ -49,6 +50,8 @@ class ClusterBackend : public QObject {
 	void show_FuelChanged();
 	void fuel_SavedChanged();
 	void ssStatusInputChanged();
+	void ss_EnableChanged();
+	void autostopActiveChanged();
 
   private slots:
 	void readPendingDatagrams();
@@ -56,7 +59,6 @@ class ClusterBackend : public QObject {
   private:
 	QUdpSocket *udpSocket;
 
-	// Variáveis internas
 	double m_currentSpeed = 0;
 	double m_gearInput = 0;
 	double m_doorOpen = 0;
@@ -67,8 +69,9 @@ class ClusterBackend : public QObject {
 	double m_show_Fuel = 0;
 	double m_fuel_Saved = 0;
 	double m_ssStatusInput = 0;
+	double m_ss_Enable = 0;
+	double m_autostopActive = 0;
 
-	// Função auxiliar (agora usando template para respeitar o C++17)
 	template <typename Signal>
 	void updateValue(double &member, double newValue, Signal signal) {
 		if (member != newValue) {
