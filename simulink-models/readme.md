@@ -1,69 +1,29 @@
-## Start-Stop System
+## Project Organization (Updated)
 
-This project contains the implementation of a Start-Stop System developed in Simulink, using a modular architecture with requirement traceability.
+The project is organized into modular subsystems and integrated models:
 
----
+* **StartStopSystem_Model/**
 
-## Project Organization
+  * `model.slx` → Top-level integrated model
+  * Subsystems (Model References):
 
-The project is organized into two main parts:
+    * `Operation_Module/` → State machine and operation logic
+    * `EnableDisable/` → Button handling and SS enable logic
+    * `SafetyModule/` → Safety and inhibit conditions
+    * `SafeStop/` → Standstill and safe stop logic
+    * `CO2/` → CO₂ avoided estimation
+    * `ClusterHMI/` → Display and HMI signals
 
-- The folder **Simulink Models** contains all developed subsystem models individually.
-- The folder **StartStopSystem** contains the integrated system model.
+* **StartStopSystem_SIL/**
 
-Inside `StartStopSystem`:
+  * `sil.slx` → Software-in-the-Loop model
+  * Integrated with C modules via `SS_App_Run10ms_If`
 
-- `model.slx` is the **top-level integrated model**
-- The remaining `.slx` files are the subsystem models used by the integrated model through Model Reference
+* **VehicleModel/**
 
----
+  * Simplified vehicle dynamics for simulation
 
-## Overview
+* **beamNG-Sim/**
 
-The integrated model connects multiple subsystems responsible for:
-
-- Input conditioning (AutoStop / AutoRestart)
-- Safety and inhibition logic
-- State machine behavior
-- HMI / Cluster interface
-- CO₂ estimation
-
-The system follows a modular design to improve readability, scalability, and traceability.
-
----
-
-## Setup
-
-Before running the model, ensure all files are accessible in MATLAB.
-
-### Add folder to MATLAB path
-
-Home → Set Path → Add Folder (including subfolders)## Running the model
-
-- Open the integrated model: 
- ```bash
-open('model.slx')
-```
-
-- Run the simulation using the Simulink interface or launch the dashboard  StartStopApp
-
- ##  Model Reference
-
-This project uses Model Reference blocks.
-
-Important:
-All .slx files must be available in the MATLAB path.
-Otherwise, referenced models will not be loaded correctly.
-
-## Requirements Traceability
-
-Requirements are linked to model elements using Simulink Requirements.
-
-To visualize:
-
-Apps → Requirements Manager
-
-or
-
-Requirements → Show Links
+  * External simulation integration (optional)
 

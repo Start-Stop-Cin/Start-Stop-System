@@ -1,0 +1,9 @@
+build/
+*.user
+*.obj
+*.exe
+*.dll
+*.so
+*.dylib
+CMakeCache.txt
+CMakeFiles/

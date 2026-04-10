@@ -21,6 +21,7 @@ RUN apt-get update && apt-get install -y \
 
 RUN apt-get update && apt-get install -y \
     clang-18 \
+    clang-format \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && ln -s /usr/bin/clang-18 /usr/local/bin/clang
