@@ -16,4 +16,7 @@
 
 #define SS_INCLINATION_MAX_RAD               (0.15f)
 
+#define SS_FUEL_IDLE_RATE_LPS          (0.0002f)
+#define SS_VEHICLE_EFFICIENCY_KMPL     (12.0f)
+
 #endif
