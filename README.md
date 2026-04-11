@@ -1,97 +1,268 @@
-# Start-Stop System: Software-in-the-Loop (SIL) Simulation
 
-![C++](https://img.shields.io/badge/C++-17%2B-blue.svg)
+# Start-Stop System: Embedded Software + SIL Integration
+
+![C](https://img.shields.io/badge/C-Embedded-blue.svg)
 ![Qt](https://img.shields.io/badge/Qt-6.x-green.svg)
 ![MATLAB](https://img.shields.io/badge/MATLAB-Simulink-orange.svg)
 ![Docker](https://img.shields.io/badge/Docker-DevContainer-blue)
 
-## Visão Geral
+---
 
-Este repositório contém a implementação de um sistema Start-Stop veicular utilizando uma abordagem **Software-in-the-Loop (SIL)**. O sistema recria a tecnologia automotiva de redução de consumo de combustível e emissões, que desliga e religa o motor automaticamente com base em condições operacionais predefinidas (ex: paradas em semáforos).
+## Overview
 
-O projeto integra um modelo de dinâmica veicular e controle lógico com uma Interface Homem-Máquina (HMI) executada nativamente, demonstrando a viabilidade de testes integrados e comunicação em rede para sistemas automotivos embarcados.
+This repository contains the implementation of a **Start-Stop automotive system** using a modular embedded software architecture in C, validated through a **Software-in-the-Loop (SIL)** environment.
 
-## Arquitetura do Sistema
+The system simulates real automotive functionality responsible for reducing fuel consumption and emissions by automatically stopping and restarting the engine based on vehicle conditions.
 
-A arquitetura é descentralizada e composta por dois nós principais operando em tempo real:
+The project integrates:
 
-1. **Planta e Lógica de Controle (Simulink):**
-   * Responsável por simular a física do veículo (powertrain, freios, aceleração).
-   * Implementa a máquina de estados finitos (Stateflow) contendo a lógica de acionamento/corte do motor.
-   * Transmite variáveis de telemetria através de pacotes UDP para a interface de visualização.
+- Embedded software modules written in **C**
+- A **Simulink SIL model** for validation and testing
+- A **Cluster HMI (Qt/QML)** for visualization
+- Optional **vehicle simulation and UDP communication**
 
-2. **Cluster de Instrumentos / HMI (C++ e Qt6/QML):**
-   * Aplicação gráfica multiplataforma que renderiza os instrumentos do painel (velocímetro, tacômetro, temperatura, hodômetro e indicadores de status).
-   * Recebe as mensagens UDP de forma assíncrona, faz o *parsing* dos dados e atualiza a interface via motor de renderização do Qt.
+---
 
-## Estrutura do Repositório
+## System Architecture
 
-O repositório integrando automação de build e análise estática:
+The system follows a modular architecture divided into three main layers:
 
-    Start-Stop-System/
-    ├── .devcontainer/       # Configuração de infraestrutura como código (Docker)
-    ├── .github/workflows/   # Pipelines de CI (Build automatizado e verificação de formato)
-    ├── docs/                # Documentação auxiliar e especificações do projeto
-    ├── include/             # Arquivos de cabeçalho (.h/.hpp) da aplicação C++
-    ├── simulink-models/     # Modelos .slx (Planta e Controlador Start-Stop)
-    ├── src/                 # Código-fonte (.cpp) e assets visuais (QML)
-    ├── tests/               # Suíte de testes unitários
-    ├── .clang-format        # Regras padronizadas de formatação de código
-    ├── Makefile             # Automação de compilação local
-    └── README.md            # Documentação principal
+### 1. Embedded Software (C – `src/`)
 
-## Tecnologias e Ferramentas
+Core logic of the Start-Stop system:
 
-* **Simulação Matemática:** MATLAB / Simulink (R2024a ou superior recomendado).
-* **Desenvolvimento Backend/HMI:** C++17, Qt 6 (QML e Qt Quick).
-* **Comunicação:** Protocolo UDP (User Datagram Protocol).
-* **Ambiente e DevOps:** Docker, Visual Studio Code (DevContainers), GitHub Actions (CI/CD), CMake/Make, Clang-Format.
+- State machine (operation logic)
+- Safety and inhibit conditions
+- Input processing
+- Timing management
+- CO₂ avoided estimation
+- Fuel saving estimation
+- Application integration layer
 
-## Pré-requisitos
+Main execution entry point:
 
-Para executar a simulação completa (SIL), é necessário ter:
+```c
+SS_App_Run10ms_If(...)
+```
 
-* **MATLAB** com as toolboxes *Simulink* e *Stateflow* (Instalado no Windows).
-* Para desenvolvimento Linux/C++: **Docker Desktop** e **Visual Studio Code** com a extensão *Dev Containers*.
-* Para execução nativa no Windows: **Bibliotecas do Qt6** configuradas ou o pacote de release gerado pelo `windeployqt`.
+Executed every **10 ms**, simulating an ECU task.
 
-## Instruções de Compilação e Execução
+---
 
-### Opção A: Executando o Cluster no Windows (Recomendado para Integração SIL)
-Como o MATLAB geralmente roda no Windows, executar o HMI nativamente no mesmo sistema operacional facilita a comunicação UDP via `localhost` (127.0.0.1), sem a necessidade de configurar pontes de rede do Docker.
+### 2. SIL Environment (Simulink – `simulink-models/`)
 
-1. Abra o modelo SIL na pasta `Start-Stop-System\simulink-models\StartStopSystem_SIL\SIL.slx`
-2. Navegue até o diretório de build do Windows (`src/Cluster_SIL/release_build/`).
-3. Dê um duplo clique no executável gerado: `ClusterSIL.exe`.
-4. A janela do painel de instrumentos será aberta e ficará aguardando os dados da rede.
+Responsible for:
 
-### Opção B: Executando/Compilando o Cluster no Linux (DevContainer / Docker)
-Ideal para desenvolvimento C++ isolado, validação de portabilidade.
+- Providing interactive inputs (dashboard)
+- Executing the embedded software
+- Validating system behavior
+- Visualizing outputs
 
-1. Clone o repositório localmente e abra a pasta no VS Code.
-2. Quando solicitado, clique em **"Reopen in Container"** para construir o ambiente Docker contendo as bibliotecas de desenvolvimento do Qt6.
-3. No terminal do VS Code, compile o código usando o CMake:
+Features validated:
 
-       cd src/cluster_SIL/linux_build
-       cmake .. -DCMAKE_BUILD_TYPE=Release
-       cmake --build . --parallel
+- AutoStop / AutoStart logic
+- SafeStop behavior
+- Drive cycle memory
+- Timer-based restart
+- CO₂ avoided
+- Fuel saved
 
-4. Execute o binário gerado (requer WSLg ou servidor X11 configurado para renderizar a janela gráfica do container para o host):
+---
 
-       ./ClusterSIL
+### 3. Cluster HMI (Qt/QML – `src/`)
 
-### Executando a Simulação (Simulink)
-Após o HMI (Windows ou Linux) estar em execução:
+Graphical interface simulating a vehicle instrument cluster:
 
-1. Inicie o MATLAB no seu sistema host.
-2. Navegue até o diretório `simulink-models/` e abra o modelo correspondente à simulação SIL.
-3. *Nota de Rede:* Se estiver usando o HMI no Windows, o bloco UDP do Simulink deve enviar dados para `127.0.0.1`. Se o HMI estiver no Docker, altere o IP destino no bloco UDP para o IP exposto pelo container (ex: IP do WSL).
-4. Inicie a simulação. A telemetria será refletida em tempo real no Cluster HMI.
+- Displays vehicle states and signals
+- Receives data via UDP
+- Visualizes:
 
-## Colaboradores
+  - Speed, gear, ignition
+  - Start-Stop status
+  - CO₂ avoided
+  - Fuel saved
 
-* Andrei Rocha
-* Bruno Almeida
-* Gabriel Xavier
-* Luana Menezes
-* Mateus Lourenço
+---
+
+## Repository Structure
+
+```text
+Start-Stop-System/
+├── .devcontainer/         # Docker-based development environment
+├── .github/workflows/     # CI pipelines (build, format, checks)
+├── .vscode/               # VS Code configuration
+├── docs/                  # Documentation and reports
+├── include/               # Header files (.h)
+├── simulink-models/       # SIL and model-based simulations (.slx)
+├── src/                   # C source code + Cluster (Qt/QML)
+│   ├── ss_operation.c
+│   ├── ss_timer.c
+│   ├── ss_co2.c
+│   ├── ss_fuel.c
+│   ├── ss_input_proc.c
+│   ├── ss_control.c
+│   ├── ss_app.c
+│   └── cluster (Qt application)
+├── tests/                 # Unit tests
+├── Makefile               # Build automation
+├── .clang-format          # Code formatting rules
+└── README.md              # Project documentation
+```
+
+---
+
+## Embedded Software Modules
+
+| Module          | Description                                     |
+| --------------- | ----------------------------------------------- |
+| `ss_operation`  | State machine (VehicleOff / Running / AutoStop) |
+| `ss_inhibit`    | Safety and inhibit conditions                   |
+| `ss_input_proc` | Signal processing and conditioning              |
+| `ss_timer`      | AutoStop timing and timeout logic               |
+| `ss_co2`        | CO₂ avoided estimation                          |
+| `ss_fuel`       | Fuel saving estimation                          |
+| `ss_control`    | Start-Stop button and enable logic              |
+| `ss_app`        | Integration layer (main execution)              |
+
+---
+
+## Key Features
+
+- Start-Stop state machine
+- Safety and inhibit logic
+- SafeStop behavior
+- Drive cycle memory
+- Timer-based restart
+- CO₂ avoided estimation
+- Fuel saving estimation
+- HMI integration
+- SIL validation environment
+
+---
+
+## Technologies
+
+- **Embedded Software:** C
+- **Simulation:** MATLAB / Simulink
+- **HMI:** Qt 6 (QML)
+- **Communication:** UDP
+- **DevOps:** Docker, GitHub Actions, Makefile
+
+---
+
+## How to Run
+
+### 1. Run SIL Simulation
+
+1. Open MATLAB
+2. Add project to path:
+
+   ```matlab
+   addpath(genpath('path_to_project'))
+   ```
+
+3. Open:
+
+   ```
+   simulink-models/StartStopSystem_SIL/sil.slx
+   ```
+
+4. Start simulation
+5. Use dashboard controls to interact
+
+---
+
+### 2. Run Cluster (Windows – Recommended)
+
+1. Navigate to:
+
+   ```
+   src/Cluster_SIL/release_build/
+   ```
+
+2. Run:
+
+   ```
+   ClusterSIL.exe
+   ```
+
+3. Start Simulink simulation
+
+---
+
+### 3. Run Cluster (Linux / Docker)
+
+```bash
+cd src/cluster_SIL/linux_build
+cmake .. -DCMAKE_BUILD_TYPE=Release
+cmake --build . --parallel
+./ClusterSIL
+```
+
+---
+
+## SIL Integration
+
+The SIL model integrates the embedded C software via:
+
+```c
+SS_App_Run10ms_If(...)
+```
+
+Execution flow:
+
+```text
+Dashboard Inputs
+        ↓
+Simulink
+        ↓
+C Interface (App Layer)
+        ↓
+System Modules
+        ↓
+Outputs → Dashboard / Cluster
+```
+
+---
+
+## Validation
+
+The system is validated using SIL through:
+
+- Interactive dashboard scenarios
+- Real-time signal observation
+- Functional verification of:
+
+  - State transitions
+  - Safety conditions
+  - Timing logic
+  - Estimation features
+
+---
+
+## Purpose
+
+This project demonstrates:
+
+- Embedded software design for automotive systems
+- Integration between C code and model-based environments
+- SIL validation methodology
+- HMI integration and visualization
+
+---
+
+## Limitations
+
+- Simplified vehicle dynamics
+- Estimations based on calibrated assumptions
+- Not intended for production deployment
+
+---
+
+## Contributors
+
+- Andrei Rocha
+- Bruno Almeida
+- Gabriel Xavier
+- Luana Menezes
+- Mateus Lourenço
