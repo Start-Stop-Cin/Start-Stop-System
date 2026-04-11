@@ -282,7 +282,7 @@ Window {
             anchors.bottom: co2Message.top
             anchors.bottomMargin: 5
             anchors.horizontalCenter: parent.horizontalCenter
-            text: "Fuel Saved: " + rootCluster.fuel_Saved.toFixed(3) + " ml"
+            text: "Fuel Saved: " + rootCluster.fuel_Saved.toFixed(3) + " l"
             color: "#2196F3"
             font.pixelSize: 10
             font.bold: true
