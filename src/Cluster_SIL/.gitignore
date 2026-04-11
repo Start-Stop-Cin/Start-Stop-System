@@ -1,0 +1,74 @@
+# ====================================================================
+# PASTAS DE COMPILAÇÃO (Build)
+# ====================================================================
+# Ignora outras pastas de build para evitar erros
+**/build/
+**/debug_build/
+**/out/
+**/bin/
+
+# ====================================================================
+# FERRAMENTAS E AMBIENTE (Qt, CMake, VS Code)
+# ====================================================================
+.vscode/
+*.code-workspace
+CMakeCache.txt
+CMakeFiles/
+CMakeSettings.json
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+*.autosave
+*.user
+
+# Objetos e Binários gerais (Ignorados no resto do projeto)
+*.obj
+*.o
+*.a
+*.lib
+*.so
+*.dylib
+*.exe
+*.dll
+*.app
+*.pdb
+*.exp
+
+# ====================================================================
+# EXCEÇÃO ABSOLUTA: PASTAS DE BUILD A SEREM MANTIDAS
+# ====================================================================
+# Garante que as pastas release_build e linux_build e TODO o seu 
+# conteúdo subam integralmente, anulando as restrições acima.
+!**/release_build/
+!**/release_build/**
+!**/linux_build/
+!**/linux_build/**
+
+# ====================================================================
+# EXCEÇÕES DAS EXCEÇÕES (Prevenção de Erros no Git do Windows)
+# ====================================================================
+# O AppRun gerado no Linux é um atalho que causa erro fatal no Git do Windows.
+# Ele DEVE continuar ignorado mesmo subindo a linux_build.
+**/AppRun
+
+# Qt específico
+*.qmake.stash
+*.qmake.cache
+
+# ====================================================================
+# MATLAB & SIMULINK 
+# ====================================================================
+slprj/
+*_ert_rtw/
+*_grt_rtw/
+*.slxc
+*.mex*
+cat2tst.log
+*.mat
+!simulink-models/*.mat
+
+# ====================================================================
+# SISTEMA OPERACIONAL
+# ====================================================================
+.DS_Store
+Thumbs.db

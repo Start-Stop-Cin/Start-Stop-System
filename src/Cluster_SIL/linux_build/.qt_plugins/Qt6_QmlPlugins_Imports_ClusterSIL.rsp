@@ -1,0 +1,14 @@
+-rootPath
+/workspaces/Start-Stop-System/src/Cluster_SIL
+-cmake-output
+-output-file
+/workspaces/Start-Stop-System/src/Cluster_SIL/linux_build/.qt_plugins/Qt6_QmlPlugins_Imports_ClusterSIL.cmake
+-importPath
+/workspaces/Start-Stop-System/src/Cluster_SIL/linux_build/ClusterUI
+-importPath
+/workspaces/Start-Stop-System/src/Cluster_SIL/linux_build
+-importPath
+/usr/lib/x86_64-linux-gnu/qt6/qml
+-qrcFiles
+/workspaces/Start-Stop-System/src/Cluster_SIL/linux_build/.rcc/qmake_ClusterUI.qrc
+/workspaces/Start-Stop-System/src/Cluster_SIL/linux_build/.rcc/ClusterSIL_raw_qml_0.qrc
