@@ -8,10 +8,14 @@ The integration between the vehicle's dynamic model and the graphical interface 
 
 ## How to Run the Project
 
+Link to demo video: <https://drive.google.com/file/d/1GR1ehBuGSHFUp2576c1T3QHjzxmZbEwR/view?usp=sharing>
+
 You do not need to have Qt installed to run this system, as all necessary dependencies are included in the distribution folder.
 
 ### 1. Launch the Interface (HMI)
+
 The pre-compiled executable is ready for use in a Windows environment.
+
 1. Navigate to the folder:  
    `src/Cluster_SIL/release_build/`
 2. Run the file:  
@@ -19,7 +23,9 @@ The pre-compiled executable is ready for use in a Windows environment.
    * *Note: If the Windows Firewall requests permission, authorize access so the program can receive data coming from Simulink.*
 
 ### 2. Start the Simulation in Simulink
+
 The dashboard will start responding as soon as it receives data packets.
+
 1. Open **MATLAB** and load your **Simulink** model (located in the project's simulation folder).
 2. Verify that the **UDP Send** block in the model is configured to:
    * **IP:** `127.0.0.1` (localhost)
@@ -30,6 +36,7 @@ The dashboard will start responding as soon as it receives data packets.
 ---
 
 ## Data Structure (UDP)
+
 The HMI expects to receive a **120-byte packet** composed of **15 values of type `double`** (8 bytes each), in the following order:
 
 | Index | Signal | Description |
@@ -47,6 +54,7 @@ The HMI expects to receive a **120-byte packet** composed of **15 values of type
 ---
 
 ## Technologies Used
+
 * **Qt 6.11.0 (MinGW 64-bit)**: Backend logic and UDP processing.
 * **QML / Qt Quick**: High-performance graphical interface and animations.
 * **Simulink**: Vehicle dynamic modeling and control logic.
@@ -55,5 +63,6 @@ The HMI expects to receive a **120-byte packet** composed of **15 values of type
 ---
 
 ## Notes
+
 * Ensure the Simulink simulation is running on the same machine as the executable, or adjust the IP in the UDP block if using different computers.
 * The executable was optimized in **Release** mode to ensure the interface does not freeze during high-frequency data reception.
