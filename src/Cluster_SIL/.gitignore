@@ -1,0 +1,15 @@
+# Pastas de build
+build/
+release_build/
+!release_build/*.exe
+!release_build/*.dll
+!release_build/*.qm
+!release_build/translations/
+
+# Arquivos temporários e de configuração
+*.user
+*.obj
+*.so
+*.dylib
+CMakeCache.txt
+CMakeFiles/
