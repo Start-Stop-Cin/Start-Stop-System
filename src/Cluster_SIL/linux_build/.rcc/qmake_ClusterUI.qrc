@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="/ClusterUI">
+    <file alias="qmldir">/workspaces/Start-Stop-System/src/Cluster_SIL/linux_build/ClusterUI/qmldir</file>
+  </qresource>
+</RCC>
+

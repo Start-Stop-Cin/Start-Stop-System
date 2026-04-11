@@ -1,0 +1,4 @@
+module ClusterUI
+typeinfo ClusterSIL.qmltypes
+prefer :/ClusterUI/
+
