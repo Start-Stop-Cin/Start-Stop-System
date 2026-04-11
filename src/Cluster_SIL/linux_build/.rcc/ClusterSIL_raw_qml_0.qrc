@@ -1,0 +1,13 @@
+<RCC>
+  <qresource prefix="/ClusterUI/">
+    <file alias="ui/main.qml">/workspaces/Start-Stop-System/src/Cluster_SIL/ui/main.qml</file>
+    <file alias="ui/images/state1.jpeg">/workspaces/Start-Stop-System/src/Cluster_SIL/ui/images/state1.jpeg</file>
+    <file alias="ui/images/state2.jpeg">/workspaces/Start-Stop-System/src/Cluster_SIL/ui/images/state2.jpeg</file>
+    <file alias="ui/images/state3.jpeg">/workspaces/Start-Stop-System/src/Cluster_SIL/ui/images/state3.jpeg</file>
+    <file alias="ui/images/state4.jpeg">/workspaces/Start-Stop-System/src/Cluster_SIL/ui/images/state4.jpeg</file>
+    <file alias="ui/images/state5.jpeg">/workspaces/Start-Stop-System/src/Cluster_SIL/ui/images/state5.jpeg</file>
+    <file alias="ui/images/state6.jpeg">/workspaces/Start-Stop-System/src/Cluster_SIL/ui/images/state6.jpeg</file>
+    <file alias="ui/images/SafeStop.jpeg">/workspaces/Start-Stop-System/src/Cluster_SIL/ui/images/SafeStop.jpeg</file>
+  </qresource>
+</RCC>
+
