@@ -1,15 +1,67 @@
-# Pastas de build
-build/
-release_build/
-!release_build/*.exe
-!release_build/*.dll
-!release_build/*.qm
-!release_build/translations/
+# ====================================================================
+# PASTAS DE COMPILAÇÃO (Build)
+# ====================================================================
+# Ignora outras pastas de build para evitar erros como o do AppRun
+**/build/
+**/linux_build/
+**/debug_build/
+**/out/
+**/bin/
 
-# Arquivos temporários e de configuração
-*.user
-*.obj
-*.so
-*.dylib
+# ====================================================================
+# FERRAMENTAS E AMBIENTE (Qt, CMake, VS Code)
+# ====================================================================
+.vscode/
+*.code-workspace
 CMakeCache.txt
 CMakeFiles/
+CMakeSettings.json
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+*.autosave
+*.user
+
+# Objetos e Binários gerais (Ignorados no resto do projeto)
+*.obj
+*.o
+*.a
+*.lib
+*.so
+*.dylib
+*.exe
+*.dll
+*.app
+*.pdb
+*.exp
+
+# ====================================================================
+# EXCEÇÃO ABSOLUTA: RELEASE BUILD
+# ====================================================================
+# Garante que a pasta release_build e TODO o seu conteúdo subam integralmente,
+# anulando as restrições de .exe, .dll, etc. feitas acima.
+!**/release_build/
+!**/release_build/**
+
+# Qt específico e erro de symlink do Linux
+*.qmake.stash
+*.qmake.cache
+**/AppRun
+
+# ====================================================================
+# MATLAB & SIMULINK 
+# ====================================================================
+slprj/
+*_ert_rtw/
+*_grt_rtw/
+*.slxc
+*.mex*
+cat2tst.log
+*.mat
+!simulink-models/*.mat
+
+# ====================================================================
+# SISTEMA OPERACIONAL
+# ====================================================================
+.DS_Store
+Thumbs.db
