@@ -1,6 +1,7 @@
 
 #include "ss_operation.h"
 #include "ss_calib.h"
+#include <stddef.h>
 
 // Global variable to hold the current state of the start-stop system operation - initialized to VEHICLE_OFF
 static SsOperationState_t g_ss_op_state = SS_OP_STATE_VEHICLE_OFF;

@@ -1,5 +1,6 @@
 #include "ss_input_proc.h"
 #include "ss_calib.h"
+#include <stddef.h>
 
 void SS_InputProc_Run(const SsRawInputs_t *raw, SsProcessedInputs_t *proc) {
 	if ((raw != NULL) && (proc != NULL)) {

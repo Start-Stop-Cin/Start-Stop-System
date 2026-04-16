@@ -1,5 +1,6 @@
 #include "ss_inhibit_safety_conditions.h"
 #include <stdbool.h>
+#include <stddef.h>
 #include <ss_calib.h>
 #include <ss_types.h>
 

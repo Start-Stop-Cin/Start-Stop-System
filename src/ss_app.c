@@ -8,6 +8,8 @@
 #include "ss_control.h"
 #include "ss_fuel.h"
 
+#include <stddef.h>
+
 static bool g_prev_engine_stop_request = false;
 
 void SS_App_Init(void) {

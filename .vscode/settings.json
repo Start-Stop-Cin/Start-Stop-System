@@ -15,5 +15,5 @@
 	},
 	"clang-format.executable": "clang-format",
 	"clang-format.style": "file",
-	"cmake.sourceDirectory": "/workspaces/Start-Stop-System/src/Cluster_SIL"
+	"cmake.sourceDirectory": "/workspaces/Start-Stop-System"
 }
