@@ -36,7 +36,7 @@ misra: | $(OBJ_DIR_MARKER)
 		--suppress=missingIncludeSystem \
 		-I include/ \
 		--xml --xml-version=2 \
-		src/ 2>$(OBJ_DIR)/cppcheck-report.xml
+		src/*.c 2>$(OBJ_DIR)/cppcheck-report.xml
 
 # Check formatting without modifying files
 format-check:
