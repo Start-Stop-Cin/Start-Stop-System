@@ -368,10 +368,10 @@ Vulkan_INCLUDE_DIR:PATH=/usr/include
 Vulkan_LIBRARY:FILEPATH=/usr/lib/x86_64-linux-gnu/libvulkan.so
 
 //Path to a file.
-XKB_INCLUDE_DIR:PATH=XKB_INCLUDE_DIR-NOTFOUND
+XKB_INCLUDE_DIR:PATH=/usr/include
 
 //Path to a library.
-XKB_LIBRARY:FILEPATH=XKB_LIBRARY-NOTFOUND
+XKB_LIBRARY:FILEPATH=/usr/lib/x86_64-linux-gnu/libxkbcommon.so
 
 
 ########################
@@ -551,6 +551,8 @@ FIND_PACKAGE_MESSAGE_DETAILS_WrapAtomic:INTERNAL=[1][v()]
 FIND_PACKAGE_MESSAGE_DETAILS_WrapOpenGL:INTERNAL=[ON][v()]
 //Details about finding WrapVulkanHeaders
 FIND_PACKAGE_MESSAGE_DETAILS_WrapVulkanHeaders:INTERNAL=[/usr/include][v()]
+//Details about finding XKB
+FIND_PACKAGE_MESSAGE_DETAILS_XKB:INTERNAL=[/usr/lib/x86_64-linux-gnu/libxkbcommon.so][/usr/include][v(0.5.0)]
 //Test HAVE_STDATOMIC
 HAVE_STDATOMIC:INTERNAL=1
 //ADVANCED property for variable: OPENGL_EGL_INCLUDE_DIR
