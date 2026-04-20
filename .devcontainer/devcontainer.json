@@ -27,5 +27,12 @@
 	],
 	"remoteEnv": {
 		"SSH_AUTH_SOCK": "/ssh-agent"
-	}
+	},
+	"forwardPorts": [
+		55000
+	],
+	"runArgs": [
+		"-p",
+		"55000:55000/udp"
+	]
 }
