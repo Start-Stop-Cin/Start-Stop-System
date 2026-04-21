@@ -106,28 +106,28 @@ coverage: $(COV_BINS)
 	@if [ -z "$(COV_BINS)" ]; then \
 	    echo "No test binaries found — skipping coverage."; \
 	    exit 0; \
-	fi
-	@for t in $(COV_BINS); do \
+	fi; \
+	for t in $(COV_BINS); do \
 	    LLVM_PROFILE_FILE="$(COV_DIR)/$$(basename $$t).profraw" $$t || true; \
-	done
-	llvm-profdata-18 merge -sparse $(COV_DIR)/*.profraw -o $(COV_DIR)/merged.profdata
+	done; \
+	llvm-profdata-18 merge -sparse $(COV_DIR)/*.profraw -o $(COV_DIR)/merged.profdata; \
 	llvm-cov-18 report $(COV_BINS) \
 	    -instr-profile=$(COV_DIR)/merged.profdata \
 	    -ignore-filename-regex='(unity|tests)' \
-	    --show-branch-summary --show-mcdc-summary
+	    --show-branch-summary --show-mcdc-summary; \
 	llvm-cov-18 show $(COV_BINS) \
 	    -instr-profile=$(COV_DIR)/merged.profdata \
 	    -show-branches=count -show-mcdc \
 	    -ignore-filename-regex='(unity|tests)' \
-	    -format=html > $(COV_DIR)/coverage.html
-	@echo "HTML report: $(COV_DIR)/coverage.html"
+	    -format=html > $(COV_DIR)/coverage.html; \
+	echo "HTML report: $(COV_DIR)/coverage.html"
 
 mutation: $(MUT_BINS)
 	@if [ -z "$(MUT_BINS)" ]; then \
 	    echo "No test binaries found — skipping mutation testing."; \
 	    exit 0; \
-	fi
-	@failed=0; \
+	fi; \
+	failed=0; \
 	for t in $(MUT_BINS); do \
 	    name=$$(basename $$t | sed 's/^test_//'); \
 	    run_dir="$(MUT_DIR)/run_$$name"; \
