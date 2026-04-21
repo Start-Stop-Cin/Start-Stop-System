@@ -103,6 +103,10 @@ test: $(TEST_BINS)
 	exit $$failed
 
 coverage: $(COV_BINS)
+	@if [ -z "$(COV_BINS)" ]; then \
+	    echo "No test binaries found — skipping coverage."; \
+	    exit 0; \
+	fi
 	@for t in $(COV_BINS); do \
 	    LLVM_PROFILE_FILE="$(COV_DIR)/$$(basename $$t).profraw" $$t || true; \
 	done
@@ -119,6 +123,10 @@ coverage: $(COV_BINS)
 	@echo "HTML report: $(COV_DIR)/coverage.html"
 
 mutation: $(MUT_BINS)
+	@if [ -z "$(MUT_BINS)" ]; then \
+	    echo "No test binaries found — skipping mutation testing."; \
+	    exit 0; \
+	fi
 	@failed=0; \
 	for t in $(MUT_BINS); do \
 	    name=$$(basename $$t | sed 's/^test_//'); \
