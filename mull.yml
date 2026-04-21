@@ -1,0 +1,23 @@
+mutators:
+  - cxx_add_to_sub
+  - cxx_sub_to_add
+  - cxx_mul_to_div
+  - cxx_div_to_mul
+  - cxx_eq_to_ne
+  - cxx_ne_to_eq
+  - cxx_gt_to_ge
+  - cxx_gt_to_le
+  - cxx_ge_to_gt
+  - cxx_ge_to_lt
+  - cxx_lt_to_ge
+  - cxx_lt_to_le
+  - cxx_le_to_gt
+  - cxx_le_to_lt
+  - cxx_post_inc_to_post_dec
+  - cxx_post_dec_to_post_inc
+  - cxx_minus_to_noop
+
+excludePaths:
+  - tests/vendor/.*
+  - tests/test_.*
+  - src/Cluster_SIL/.*
