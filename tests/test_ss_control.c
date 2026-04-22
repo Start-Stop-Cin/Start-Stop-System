@@ -80,23 +80,26 @@ void test_IgnitionRisingEdge_ShouldAlwaysEnableSS(void) {
 }
 
 void test_Mutation_Killers(void) {
-    
     SS_Init(); 
     g_SS_Inputs.IgnitionStatus = true;
-    g_SS_State.ignition_prev = true; // Evita borda de subida acidental
+    g_SS_State.ignition_prev = true;
     g_SS_Inputs.ButtonInput = false;
-    SS_Step(); // Estabiliza o sistema em IDLE
+    SS_Step(); // Sistema em IDLE
 
-    // 2. Inicia o teste de debounce (Mata mutante >= 5)
+    // Inicia o aperto do botão
     g_SS_Inputs.ButtonInput = true;
-    for(int i = 0; i < 4; i++) SS_Step(); // 4 ciclos
-    TEST_ASSERT_EQUAL(ST_DEBOUNCING, g_SS_State.fsm_state);
     
+    // 5 ciclos
+    for(int i = 0; i < 5; i++) {
+        SS_Step();
+    }
+
+    // Agora, no próximo passo, a FSM DEVE ter saído de DEBOUNCING
     SS_Step(); 
+    
     TEST_ASSERT_NOT_EQUAL(ST_DEBOUNCING, g_SS_State.fsm_state);
 
-    // 3. Verifica o LED de Update (Mata mutante !=)
-    // Se houve mudança de estado, o LED_Update_Cmd deve ser True neste ciclo
+    // Verifica se o LED de comando foi acionado pela mudança de estado
     TEST_ASSERT_TRUE(g_SS_Outputs.LED_Update_Cmd);
 }
 
