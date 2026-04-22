@@ -67,6 +67,4 @@ bool SS_UT_StopIgnitionOn(const SsOperationInputs_t *in);
 
 #endif
 
-
-
 #endif

@@ -170,56 +170,56 @@ bool SS_Operation_IsAutoStopActiveState(void) {
 
 /* --- Allow forcing internal state --- */
 void SS_Operation_SetStateForTest(SsOperationState_t state) {
-    g_ss_op_state = state;
+	g_ss_op_state = state;
 }
 
 /* --- Wrappers for static helpers --- */
 bool SS_UT_StopEnabled(const SsOperationInputs_t *in) {
-    return SS_StopEnabled(in);
+	return SS_StopEnabled(in);
 }
 
 bool SS_UT_StopAllowed(const SsOperationInputs_t *in) {
-    return SS_StopAllowed(in);
+	return SS_StopAllowed(in);
 }
 
 bool SS_UT_StopGearInDrive(const SsOperationInputs_t *in) {
-    return SS_StopGearInDrive(in);
+	return SS_StopGearInDrive(in);
 }
 
 bool SS_UT_StopBrakePressed(const SsOperationInputs_t *in) {
-    return SS_StopBrakePressed(in);
+	return SS_StopBrakePressed(in);
 }
 
 bool SS_UT_StopSpeedWithinLimit(const SsOperationInputs_t *in) {
-    return SS_StopSpeedWithinLimit(in);
+	return SS_StopSpeedWithinLimit(in);
 }
 
 bool SS_UT_RestartByAccelerator(const SsOperationInputs_t *in) {
-    return SS_RestartByAccelerator(in);
+	return SS_RestartByAccelerator(in);
 }
 
 bool SS_UT_RestartByBrakeRelease(const SsOperationInputs_t *in) {
-    return SS_RestartByBrakeRelease(in);
+	return SS_RestartByBrakeRelease(in);
 }
 
 bool SS_UT_RestartByGearChange(const SsOperationInputs_t *in) {
-    return SS_RestartByGearChange(in);
+	return SS_RestartByGearChange(in);
 }
 
 bool SS_UT_RestartByDisable(const SsOperationInputs_t *in) {
-    return SS_RestartByDisable(in);
+	return SS_RestartByDisable(in);
 }
 
 bool SS_UT_RestartByTimeout(const SsOperationInputs_t *in) {
-    return SS_RestartByTimeout(in);
+	return SS_RestartByTimeout(in);
 }
 
 bool SS_UT_IsStopConditionMet(const SsOperationInputs_t *in) {
-    return SS_IsStopConditionMet(in);
+	return SS_IsStopConditionMet(in);
 }
 
 bool SS_UT_StopIgnitionOn(const SsOperationInputs_t *in) {
-    return SS_StopIgnitionOn(in);
+	return SS_StopIgnitionOn(in);
 }
 
 #endif
