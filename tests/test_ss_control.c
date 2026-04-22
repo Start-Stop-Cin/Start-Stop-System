@@ -79,6 +79,27 @@ void test_IgnitionRisingEdge_ShouldAlwaysEnableSS(void) {
     TEST_ASSERT_FALSE(g_SS_Outputs.HMI_LED);        // LED apaga (Sistema ON)
 }
 
+void test_Mutation_Killers(void) {
+    
+    SS_Init();
+    g_SS_Inputs.SS_Button = true;
+    for(int i = 0; i < 4; i++) SS_Step(); // 4 ciclos
+    TEST_ASSERT_FALSE(g_SS_State.ss_enable_current); 
+    
+    SS_Step(); // 5º ciclo EXATO
+    
+    TEST_ASSERT_TRUE(g_SS_State.ss_enable_current != false); 
+
+    bool state_before = g_SS_State.ss_enable_current;
+    
+    g_SS_Inputs.SS_Button = true;
+    for(int i = 0; i < 6; i++) SS_Step(); 
+    
+    if (g_SS_State.ss_enable_current != state_before) {
+        TEST_ASSERT_TRUE(g_SS_Outputs.LED_Update_Cmd);
+    }
+}
+
 void test_SS_Enabled_Final_Logic(void) {
     // Caso 1: SS Habilitado mas SEM Ignição -> Final deve ser FALSE
     SS_Init();
@@ -104,5 +125,6 @@ int main(void) {
     RUN_TEST(test_ButtonToggle_ShouldChangeStateAfterValidPress);
     RUN_TEST(test_IgnitionRisingEdge_ShouldAlwaysEnableSS);
     RUN_TEST(test_SS_Enabled_Final_Logic);
+    RUN_TEST(test_Mutation_Killers);
     return UNITY_END();
 }
