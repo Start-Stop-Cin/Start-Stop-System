@@ -30,7 +30,6 @@ MUT_THRESHOLD ?= 80
 
 .PHONY: all build misra format-check clean \
         test coverage mutation \
-        test-operation-special coverage-operation-special mutation-operation-special
 
 all: build
 
