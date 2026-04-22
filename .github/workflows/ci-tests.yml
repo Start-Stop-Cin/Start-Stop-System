@@ -56,7 +56,10 @@ jobs:
         if: always()
         with:
           name: coverage-report
-          path: build/coverage/coverage.html
+          path: |
+            build/coverage/
+            !build/coverage/*.profraw
+            !build/coverage/*.profdata
           if-no-files-found: ignore
 
   mutation:
