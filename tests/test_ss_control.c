@@ -91,6 +91,7 @@ void test_SS_Enabled_Final_Logic(void) {
     g_SS_Inputs.IgnitionStatus = true;
     SS_Step();
     TEST_ASSERT_FALSE(g_SS_Outputs.SS_Enabled_Final);
+}   
 
 int main(void) {
     UNITY_BEGIN();
