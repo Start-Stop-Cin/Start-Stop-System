@@ -79,11 +79,25 @@ void test_IgnitionRisingEdge_ShouldAlwaysEnableSS(void) {
     TEST_ASSERT_FALSE(g_SS_Outputs.HMI_LED);        // LED apaga (Sistema ON)
 }
 
+void test_SS_Enabled_Final_Logic(void) {
+    // Caso 1: SS Habilitado mas SEM Ignição -> Final deve ser FALSE
+    g_SS_State.ss_enable_current = true;
+    g_SS_Inputs.IgnitionStatus = false;
+    SS_Step();
+    TEST_ASSERT_FALSE(g_SS_Outputs.SS_Enabled_Final);
+
+    // Caso 2: SS Desabilitado mas COM Ignição -> Final deve ser FALSE
+    g_SS_State.ss_enable_current = false;
+    g_SS_Inputs.IgnitionStatus = true;
+    SS_Step();
+    TEST_ASSERT_FALSE(g_SS_Outputs.SS_Enabled_Final);
+
 int main(void) {
     UNITY_BEGIN();
     RUN_TEST(test_SS_Init_Should_InitializeGlobalStructures);
     RUN_TEST(test_ButtonDebounce_ShouldIgnoreSpikesShorterThan50ms);
     RUN_TEST(test_ButtonToggle_ShouldChangeStateAfterValidPress);
     RUN_TEST(test_IgnitionRisingEdge_ShouldAlwaysEnableSS);
+    RUN_TEST(test_SS_Enabled_Final_Logic);
     return UNITY_END();
 }
