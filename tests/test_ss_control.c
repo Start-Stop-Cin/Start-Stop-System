@@ -25,7 +25,7 @@ void test_ButtonDebounce_ShouldIgnoreSpikesShorterThan50ms(void) {
     g_SS_Inputs.IgnitionStatus = true;
     SS_Step(); // Estabiliza ignição (borda de subida processada)
 
-    press_ButtonInput();
+    press_SS_Button();
     // Simula 3 ciclos (30ms se o step for 10ms)
     for(int i = 0; i < 3; i++) {
         SS_Step();
@@ -34,7 +34,7 @@ void test_ButtonDebounce_ShouldIgnoreSpikesShorterThan50ms(void) {
     }
     
     // Solta o botão antes de completar 5 ciclos
-    release_ButtonInput();
+    release_SS_Button();
     SS_Step();
     
     TEST_ASSERT_EQUAL(ST_IDLE, g_SS_State.fsm_state);
@@ -46,7 +46,7 @@ void test_ButtonToggle_ShouldChangeStateAfterValidPress(void) {
     g_SS_Inputs.IgnitionStatus = true;
     SS_Step(); // Estabiliza ignição
 
-    press_ButtonInput();
+    press_SS_Button();
     
     bool valid_detected = false;
 
