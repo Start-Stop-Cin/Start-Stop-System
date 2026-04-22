@@ -23,12 +23,13 @@ COV_THRESHOLD ?= 80
 
 MUT_DIR    := $(OBJ_DIR)/mutation
 MUT_FLAGS  := -g -O0 -fno-omit-frame-pointer \
-               -fpass-plugin=/usr/lib/mull-ir-frontend-18 \
-               -grecord-command-line
+              -fpass-plugin=/usr/lib/mull-ir-frontend-18 \
+              -grecord-command-line
 MUT_BINS   := $(patsubst $(TEST_DIR)/%.c, $(MUT_DIR)/%, $(TEST_SRCS))
 MUT_THRESHOLD ?= 80
 
-.PHONY: all build misra format-check clean test coverage mutation
+.PHONY: all build misra format-check clean \
+        test coverage mutation \
 
 all: build
 
@@ -81,23 +82,32 @@ $(MUT_DIR)/.dir:
 $(MUT_DIR)/unity.o: $(UNITY_SRC)/unity.c | $(MUT_DIR)/.dir
 	$(CC) -std=c99 $(MUT_FLAGS) -I$(UNITY_SRC) -c $< -o $@
 
+# ==========================================================
+# UNIT_TEST only for ss_operation
+# Minimal change: only operation gets wrappers enabled
+# ==========================================================
+$(OBJ_DIR)/test_ss_operation: EXTRA_DEFS := -DUNIT_TEST
+$(COV_DIR)/test_ss_operation: EXTRA_DEFS := -DUNIT_TEST
+$(MUT_DIR)/test_ss_operation: EXTRA_DEFS := -DUNIT_TEST
+$(MUT_DIR)/ss_operation.o: EXTRA_DEFS := -DUNIT_TEST
+
 # Test binaries
 $(OBJ_DIR)/test_%: $(TEST_DIR)/test_%.c $(PROD_SRCS) $(OBJ_DIR)/unity.o | $(OBJ_DIR_MARKER)
-	$(CC) $(CFLAGS) -g -O0 $(INCLUDE) -I$(UNITY_SRC) $< $(PROD_SRCS) $(OBJ_DIR)/unity.o -o $@
+	$(CC) $(CFLAGS) -g -O0 $(EXTRA_DEFS) $(INCLUDE) -I$(UNITY_SRC) $< $(PROD_SRCS) $(OBJ_DIR)/unity.o -o $@
 
 # Coverage binaries
 $(COV_DIR)/test_%: $(TEST_DIR)/test_%.c $(PROD_SRCS) $(COV_DIR)/unity.o | $(COV_DIR)/.dir
-	$(CC) $(CFLAGS) $(COV_FLAGS) $(INCLUDE) -I$(UNITY_SRC) $< $(PROD_SRCS) $(COV_DIR)/unity.o -o $@
+	$(CC) $(CFLAGS) $(COV_FLAGS) $(EXTRA_DEFS) $(INCLUDE) -I$(UNITY_SRC) $< $(PROD_SRCS) $(COV_DIR)/unity.o -o $@
 
 # Mutation object files (one .c -> one .o so Mull can replay each command)
 MUT_PROD_OBJS := $(patsubst $(SRC_DIR)/%.c, $(MUT_DIR)/%.o, $(PROD_SRCS))
 
 $(MUT_DIR)/%.o: $(SRC_DIR)/%.c | $(MUT_DIR)/.dir
-	$(CC) $(CFLAGS) $(MUT_FLAGS) $(INCLUDE) -c $< -o $@
+	$(CC) $(CFLAGS) $(MUT_FLAGS) $(EXTRA_DEFS) $(INCLUDE) -c $< -o $@
 
 # Mutation binaries (link step)
 $(MUT_DIR)/test_%: $(TEST_DIR)/test_%.c $(MUT_PROD_OBJS) $(MUT_DIR)/unity.o | $(MUT_DIR)/.dir
-	$(CC) $(CFLAGS) $(MUT_FLAGS) $(INCLUDE) -I$(UNITY_SRC) $< $(MUT_PROD_OBJS) $(MUT_DIR)/unity.o -o $@
+	$(CC) $(CFLAGS) $(MUT_FLAGS) $(EXTRA_DEFS) $(INCLUDE) -I$(UNITY_SRC) $< $(MUT_PROD_OBJS) $(MUT_DIR)/unity.o -o $@
 
 test: $(TEST_BINS)
 	@failed=0; \
@@ -136,15 +146,15 @@ coverage: $(COV_BINS)
 	            row="$$row<td class=\"na\">N/A</td>"; \
 	            continue; \
 	        fi; \
-	        pct=$$(printf '%.2f' $$percent); \
+	        pct=$$(printf '%.2f' $$percent | sed 's/%//g'); \
 	        if awk "BEGIN {exit !($$percent < $(COV_THRESHOLD))}"; then \
 	            printf "  %-9s %.2f%% (%s/%s) FAIL (threshold %s%%)\n" "$$metric:" $$percent $$covered $$count $(COV_THRESHOLD); \
 	            failed=1; \
 	            mod_failed=1; \
-	            row="$$row<td class=\"fail\">$$pct%% ($$covered/$$count)</td>"; \
+	            row="$$row<td class=\"fail\">$$pct% ($$covered/$$count)</td>"; \
 	        else \
 	            printf "  %-9s %.2f%% (%s/%s) OK\n" "$$metric:" $$percent $$covered $$count; \
-	            row="$$row<td class=\"ok\">$$pct%% ($$covered/$$count)</td>"; \
+	            row="$$row<td class=\"ok\">$$pct% ($$covered/$$count)</td>"; \
 	        fi; \
 	    done; \
 	    if [ "$$mod_failed" = "1" ]; then \

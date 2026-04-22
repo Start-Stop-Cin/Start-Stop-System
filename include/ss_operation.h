@@ -44,4 +44,27 @@ void SS_Operation_Run10ms(
 SsOperationState_t SS_Operation_GetState(void);
 bool SS_Operation_IsAutoStopActiveState(void);
 
+// Test hooks and helper functions for unit testing
+#ifdef UNIT_TEST
+
+/* --- Test hooks --- */
+void SS_Operation_SetStateForTest(SsOperationState_t state);
+
+/* --- Helper exposure for MC/DC --- */
+bool SS_UT_StopEnabled(const SsOperationInputs_t *in);
+bool SS_UT_StopAllowed(const SsOperationInputs_t *in);
+bool SS_UT_StopGearInDrive(const SsOperationInputs_t *in);
+bool SS_UT_StopBrakePressed(const SsOperationInputs_t *in);
+bool SS_UT_StopSpeedWithinLimit(const SsOperationInputs_t *in);
+
+bool SS_UT_RestartByAccelerator(const SsOperationInputs_t *in);
+bool SS_UT_RestartByBrakeRelease(const SsOperationInputs_t *in);
+bool SS_UT_RestartByGearChange(const SsOperationInputs_t *in);
+bool SS_UT_RestartByDisable(const SsOperationInputs_t *in);
+bool SS_UT_RestartByTimeout(const SsOperationInputs_t *in);
+bool SS_UT_IsStopConditionMet(const SsOperationInputs_t *in);
+bool SS_UT_StopIgnitionOn(const SsOperationInputs_t *in);
+
+#endif
+
 #endif

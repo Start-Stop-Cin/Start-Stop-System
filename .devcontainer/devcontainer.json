@@ -19,7 +19,7 @@
 			]
 		}
 	},
-	"postCreateCommand": "clang-18 --version && cppcheck --version",
+	"postCreateCommand": "git submodule sync --recursive && git submodule update --init --recursive && clang-18 --version && cppcheck --version",
 	"remoteUser": "ubuntu",
 	"updateRemoteUserUID": true,
 	"mounts": [
