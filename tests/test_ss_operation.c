@@ -463,6 +463,147 @@ void test_SS_Operation_IsAutoStopActiveState_returns_false_when_not_in_autostop(
  * Supporting test
  *==========================================================*/
 
+ void test_SS_Operation_default_case_recovers_to_vehicle_off(void)
+{
+    set_default_inputs();
+
+    SS_Operation_SetStateForTest((SsOperationState_t)999);
+
+    SS_Operation_Run10ms(&in, &out, false);
+
+    TEST_ASSERT_EQUAL(SS_OP_STATE_VEHICLE_OFF, out.state);
+    TEST_ASSERT_FALSE(out.engine_stop_request);
+    TEST_ASSERT_FALSE(out.engine_restart_request);
+    TEST_ASSERT_FALSE(out.autostop_active);
+}
+
+/*==========================================================
+ * UT-OP-25
+ * Supporting test
+ *==========================================================*/
+
+void test_SS_Operation_helper_stop_enabled_returns_false_when_input_is_null(void)
+{
+    TEST_ASSERT_FALSE(SS_UT_StopEnabled(NULL));
+}
+
+/*==========================================================
+ * UT-OP-26
+ * Supporting test
+ *==========================================================*/
+
+void test_SS_Operation_helper_stop_allowed_returns_false_when_input_is_null(void)
+{
+    TEST_ASSERT_FALSE(SS_UT_StopAllowed(NULL));
+}
+
+/*==========================================================
+ * UT-OP-27
+ * Supporting test
+ *==========================================================*/
+
+void test_SS_Operation_helper_stop_gear_in_drive_returns_false_when_input_is_null(void)
+{
+    TEST_ASSERT_FALSE(SS_UT_StopGearInDrive(NULL));
+}
+
+/*==========================================================
+ * UT-OP-28
+ * Supporting test
+ *==========================================================*/
+
+void test_SS_Operation_helper_stop_brake_pressed_returns_false_when_input_is_null(void)
+{
+    TEST_ASSERT_FALSE(SS_UT_StopBrakePressed(NULL));
+}
+
+/*==========================================================
+ * UT-OP-29
+ * Supporting test
+ *==========================================================*/
+
+void test_SS_Operation_helper_stop_speed_within_limit_returns_false_when_input_is_null(void)
+{
+    TEST_ASSERT_FALSE(SS_UT_StopSpeedWithinLimit(NULL));
+}
+
+/*==========================================================
+ * UT-OP-30
+ * Supporting test
+ *==========================================================*/
+
+void test_SS_Operation_helper_restart_by_accelerator_returns_false_when_input_is_null(void)
+{
+    TEST_ASSERT_FALSE(SS_UT_RestartByAccelerator(NULL));
+}
+
+/*==========================================================
+ * UT-OP-31
+ * Supporting test
+ *==========================================================*/
+
+void test_SS_Operation_helper_restart_by_brake_release_returns_false_when_input_is_null(void)
+{
+    TEST_ASSERT_FALSE(SS_UT_RestartByBrakeRelease(NULL));
+}
+
+/*==========================================================
+ * UT-OP-32
+ * Supporting test
+ *==========================================================*/
+
+void test_SS_Operation_helper_restart_by_gear_change_returns_false_when_input_is_null(void)
+{
+    TEST_ASSERT_FALSE(SS_UT_RestartByGearChange(NULL));
+}
+
+/*==========================================================
+ * UT-OP-33
+ * Supporting test
+ *==========================================================*/
+
+void test_SS_Operation_helper_restart_by_disable_returns_false_when_input_is_null(void)
+{
+    TEST_ASSERT_FALSE(SS_UT_RestartByDisable(NULL));
+}
+
+/*==========================================================
+ * UT-OP-34
+ * Supporting test
+ *==========================================================*/
+
+void test_SS_Operation_helper_restart_by_timeout_returns_false_when_input_is_null(void)
+{
+    TEST_ASSERT_FALSE(SS_UT_RestartByTimeout(NULL));
+}
+
+/*==========================================================
+ * UT-OP-35
+ * Supporting test
+ *==========================================================*/
+
+void test_SS_Operation_stop_condition_false_when_ignition_is_off(void)
+{
+    set_valid_stop_inputs();
+
+    TEST_ASSERT_TRUE(SS_UT_IsStopConditionMet(&in));
+
+    in.ignition_on = false;
+
+    TEST_ASSERT_FALSE(SS_UT_IsStopConditionMet(&in));
+}
+
+/*==========================================================
+ * UT-OP-36
+ * Supporting test
+ *==========================================================*/
+
+void test_SS_Operation_helper_stop_ignition_on_returns_false_when_input_is_null(void)
+{
+    TEST_ASSERT_FALSE(SS_UT_StopIgnitionOn(NULL));
+}
+
+
 int main(void)
 {
     UNITY_BEGIN();
@@ -490,6 +631,23 @@ int main(void)
 	RUN_TEST(test_SS_Operation_GetState_returns_current_state);
 	RUN_TEST(test_SS_Operation_IsAutoStopActiveState_returns_true_when_in_autostop);
 	RUN_TEST(test_SS_Operation_IsAutoStopActiveState_returns_false_when_not_in_autostop);
+
+	RUN_TEST(test_SS_Operation_default_case_recovers_to_vehicle_off);
+
+	RUN_TEST(test_SS_Operation_helper_stop_enabled_returns_false_when_input_is_null);
+	RUN_TEST(test_SS_Operation_helper_stop_allowed_returns_false_when_input_is_null);
+	RUN_TEST(test_SS_Operation_helper_stop_gear_in_drive_returns_false_when_input_is_null);
+	RUN_TEST(test_SS_Operation_helper_stop_brake_pressed_returns_false_when_input_is_null);
+	RUN_TEST(test_SS_Operation_helper_stop_speed_within_limit_returns_false_when_input_is_null);
+
+	RUN_TEST(test_SS_Operation_helper_restart_by_accelerator_returns_false_when_input_is_null);
+	RUN_TEST(test_SS_Operation_helper_restart_by_brake_release_returns_false_when_input_is_null);
+	RUN_TEST(test_SS_Operation_helper_restart_by_gear_change_returns_false_when_input_is_null);
+	RUN_TEST(test_SS_Operation_helper_restart_by_disable_returns_false_when_input_is_null);
+	RUN_TEST(test_SS_Operation_helper_restart_by_timeout_returns_false_when_input_is_null);
+	RUN_TEST(test_SS_Operation_stop_condition_false_when_ignition_is_off);
+	RUN_TEST(test_SS_Operation_helper_stop_ignition_on_returns_false_when_input_is_null);
 	
     return UNITY_END();
 }
+

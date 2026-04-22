@@ -164,3 +164,75 @@ SsOperationState_t SS_Operation_GetState(void) { return g_ss_op_state; }
 bool SS_Operation_IsAutoStopActiveState(void) {
 	return (g_ss_op_state == SS_OP_STATE_AUTOSTOP_ACTIVE);
 }
+
+// Test hooks and helper functions for unit testing - only included when UNIT_TEST is defined
+#ifdef UNIT_TEST
+
+/* --- Allow forcing internal state --- */
+void SS_Operation_SetStateForTest(SsOperationState_t state)
+{
+    g_ss_op_state = state;
+}
+
+/* --- Wrappers for static helpers --- */
+bool SS_UT_StopEnabled(const SsOperationInputs_t *in)
+{
+    return SS_StopEnabled(in);
+}
+
+bool SS_UT_StopAllowed(const SsOperationInputs_t *in)
+{
+    return SS_StopAllowed(in);
+}
+
+bool SS_UT_StopGearInDrive(const SsOperationInputs_t *in)
+{
+    return SS_StopGearInDrive(in);
+}
+
+bool SS_UT_StopBrakePressed(const SsOperationInputs_t *in)
+{
+    return SS_StopBrakePressed(in);
+}
+
+bool SS_UT_StopSpeedWithinLimit(const SsOperationInputs_t *in)
+{
+    return SS_StopSpeedWithinLimit(in);
+}
+
+bool SS_UT_RestartByAccelerator(const SsOperationInputs_t *in)
+{
+    return SS_RestartByAccelerator(in);
+}
+
+bool SS_UT_RestartByBrakeRelease(const SsOperationInputs_t *in)
+{
+    return SS_RestartByBrakeRelease(in);
+}
+
+bool SS_UT_RestartByGearChange(const SsOperationInputs_t *in)
+{
+    return SS_RestartByGearChange(in);
+}
+
+bool SS_UT_RestartByDisable(const SsOperationInputs_t *in)
+{
+    return SS_RestartByDisable(in);
+}
+
+bool SS_UT_RestartByTimeout(const SsOperationInputs_t *in)
+{
+    return SS_RestartByTimeout(in);
+}
+
+bool SS_UT_IsStopConditionMet(const SsOperationInputs_t *in)
+{
+    return SS_IsStopConditionMet(in);
+}
+
+bool SS_UT_StopIgnitionOn(const SsOperationInputs_t *in)
+{
+    return SS_StopIgnitionOn(in);
+}
+
+#endif
