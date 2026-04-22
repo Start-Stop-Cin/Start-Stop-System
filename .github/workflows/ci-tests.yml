@@ -1,0 +1,85 @@
+name: CI - Tests, Coverage and Mutation
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  unit-tests:
+    name: Unit Tests (Unity)
+    runs-on: ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Build dev image
+        run: docker build -t start-stop-container .devcontainer/
+
+      - name: Run unit tests
+        run: |
+          docker run --rm \
+            --user $(id -u):$(id -g) \
+            -v ${{ github.workspace }}:/workspaces/Start-Stop-System \
+            -w /workspaces/Start-Stop-System \
+            start-stop-container \
+            make test
+
+  coverage:
+    name: Coverage (llvm-cov / MC/DC)
+    runs-on: ubuntu-24.04
+    needs: unit-tests
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Build dev image
+        run: docker build -t start-stop-container .devcontainer/
+
+      - name: Run coverage
+        run: |
+          docker run --rm \
+            --user $(id -u):$(id -g) \
+            -v ${{ github.workspace }}:/workspaces/Start-Stop-System \
+            -w /workspaces/Start-Stop-System \
+            start-stop-container \
+            make coverage
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-report
+          path: |
+            build/coverage/
+            !build/coverage/*.profraw
+            !build/coverage/*.profdata
+          if-no-files-found: ignore
+
+  mutation:
+    name: Mutation Testing (Mull)
+    runs-on: ubuntu-24.04
+    needs: unit-tests
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Build dev image
+        run: docker build -t start-stop-container .devcontainer/
+
+      - name: Run mutation testing
+        run: |
+          docker run --rm \
+            --user $(id -u):$(id -g) \
+            -v ${{ github.workspace }}:/workspaces/Start-Stop-System \
+            -w /workspaces/Start-Stop-System \
+            start-stop-container \
+            make mutation
