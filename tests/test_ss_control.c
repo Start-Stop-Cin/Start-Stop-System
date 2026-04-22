@@ -81,14 +81,18 @@ void test_IgnitionRisingEdge_ShouldAlwaysEnableSS(void) {
 
 void test_SS_Enabled_Final_Logic(void) {
     // Caso 1: SS Habilitado mas SEM Ignição -> Final deve ser FALSE
-    g_SS_State.ss_enable_current = true;
+    SS_Init();
     g_SS_Inputs.IgnitionStatus = false;
+    g_SS_State.ignition_prev = false;
+    g_SS_State.ss_enable_current = true;
     SS_Step();
     TEST_ASSERT_FALSE(g_SS_Outputs.SS_Enabled_Final);
 
-    // Caso 2: SS Desabilitado mas COM Ignição -> Final deve ser FALSE
-    g_SS_State.ss_enable_current = false;
+    // Caso 2: SS Desabilitado mas COM Ignição estável -> Final deve ser FALSE
+    SS_Init();
     g_SS_Inputs.IgnitionStatus = true;
+    g_SS_State.ignition_prev = true; // Forcei que já estava ligado para evitar borda de subida
+    g_SS_State.ss_enable_current = false;
     SS_Step();
     TEST_ASSERT_FALSE(g_SS_Outputs.SS_Enabled_Final);
 }   
