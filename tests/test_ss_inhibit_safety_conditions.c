@@ -404,6 +404,134 @@ void test_inhibit_safety_conditions_maximum_edge_failure(void)
     TEST_ASSERT_FALSE(result);
 }
 
+/*==========================================================
+ * UT-STM-01
+ * Test standstill_management initial state
+ *==========================================================*/
+void test_standstill_management_initial_false(void)
+{
+    bool result = standstill_management(false, false, true, true);
+    TEST_ASSERT_FALSE(result);
+}
+
+/*==========================================================
+ * UT-STM-02
+ * Test standstill_management set condition
+ *==========================================================*/
+void test_standstill_management_set_condition(void)
+{
+    bool result1 = standstill_management(true, false, false, true);
+    TEST_ASSERT_FALSE(result1);
+
+    bool result2 = standstill_management(true, false, false, true);
+    TEST_ASSERT_TRUE(result2);
+}
+
+/*==========================================================
+ * UT-STM-03
+ * Test standstill_management reset condition
+ *==========================================================*/
+void test_standstill_management_reset_condition(void)
+{
+    standstill_management(true, false, false, true);
+    bool result1 = standstill_management(true, true, true, true);
+    TEST_ASSERT_TRUE(result1);
+
+    bool result2 = standstill_management(true, true, true, true);
+    TEST_ASSERT_FALSE(result2);
+}
+
+/*==========================================================
+ * UT-STM-04
+ * Test standstill_management reset after set
+ *==========================================================*/
+void test_standstill_management_reset_after_set(void)
+{
+    standstill_management(true, false, false, true);
+    bool result = standstill_management(false, true, true, true);
+    TEST_ASSERT_TRUE(result);
+}
+
+/*==========================================================
+ * UT-STM-05
+ * Test standstill_management hold state
+ *==========================================================*/
+void test_standstill_management_hold_state(void)
+{
+    standstill_management(true, false, false, true);
+    bool result = standstill_management(false, false, true, true);
+    TEST_ASSERT_TRUE(result);
+}
+
+/*==========================================================
+ * UT-DMB-01
+ * Test drivecycle_memory_block ignition off
+ *==========================================================*/
+void test_drivecycle_memory_block_ignition_off(void)
+{
+    bool result = drivecycle_memory_block(false, false, 0.0f);
+    TEST_ASSERT_FALSE(result);
+}
+
+/*==========================================================
+ * UT-DMB-02
+ * Test drivecycle_memory_block engine stop request
+ *==========================================================*/
+void test_drivecycle_memory_block_engine_stop_request(void)
+{
+    bool result = drivecycle_memory_block(true, true, 0.0f);
+    TEST_ASSERT_FALSE(result);
+}
+
+/*==========================================================
+ * UT-DMB-03
+ * Test drivecycle_memory_block high speed
+ *==========================================================*/
+void test_drivecycle_memory_block_high_speed(void)
+{
+    bool result = drivecycle_memory_block(true, false, 10.0f);
+    TEST_ASSERT_TRUE(result);
+
+    bool result2 = drivecycle_memory_block(true, false, 10.0f);
+    TEST_ASSERT_TRUE(result2);
+}
+
+/*==========================================================
+ * UT-DMB-04
+ * Test drivecycle_memory_block memory effect
+ *==========================================================*/
+void test_drivecycle_memory_block_memory_effect(void)
+{
+    drivecycle_memory_block(true, false, 10.0f);
+    bool result = drivecycle_memory_block(true, false, 5.0f);
+    TEST_ASSERT_TRUE(result);
+}
+
+/*==========================================================
+ * UT-DMB-05
+ * Test drivecycle_memory_block reset memory
+ *==========================================================*/
+void test_drivecycle_memory_block_reset_memory(void)
+{
+    drivecycle_memory_block(true, false, 10.0f);
+    bool result = drivecycle_memory_block(false, false, 5.0f);
+    TEST_ASSERT_FALSE(result);
+
+    bool result2 = drivecycle_memory_block(true, false, 5.0f);
+    TEST_ASSERT_FALSE(result2);
+}
+
+/*==========================================================
+ * UT-DMB-06
+ * Test drivecycle_memory_block low speed after reset
+ *==========================================================*/
+void test_drivecycle_memory_block_low_speed(void)
+{
+    drivecycle_memory_block(false, false, 5.0f); // reset
+    bool result = drivecycle_memory_block(true, false, 5.0f);
+    TEST_ASSERT_FALSE(result);
+}
+
 int main(void)
 {
     UNITY_BEGIN();
@@ -444,6 +572,19 @@ int main(void)
     RUN_TEST(test_inhibit_safety_conditions_all_valid_except_enabled);
     RUN_TEST(test_inhibit_safety_conditions_minimum_inputs_true_case);
     RUN_TEST(test_inhibit_safety_conditions_maximum_edge_failure);
+
+    RUN_TEST(test_standstill_management_initial_false);
+    RUN_TEST(test_standstill_management_set_condition);
+    RUN_TEST(test_standstill_management_reset_condition);
+    RUN_TEST(test_standstill_management_reset_after_set);
+    RUN_TEST(test_standstill_management_hold_state);
+
+    RUN_TEST(test_drivecycle_memory_block_ignition_off);
+    RUN_TEST(test_drivecycle_memory_block_engine_stop_request);
+    RUN_TEST(test_drivecycle_memory_block_high_speed);
+    RUN_TEST(test_drivecycle_memory_block_memory_effect);
+    RUN_TEST(test_drivecycle_memory_block_reset_memory);
+    RUN_TEST(test_drivecycle_memory_block_low_speed);
 
     return UNITY_END();
 }
