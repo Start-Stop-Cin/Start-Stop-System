@@ -1,6 +1,6 @@
 #include "unity.h"
 #include "ss_inhibit_safety_conditions.h"
-#include <ss_types.h>
+#include <ss_calib.h>
 
 /*
  * UT-ISC-01
