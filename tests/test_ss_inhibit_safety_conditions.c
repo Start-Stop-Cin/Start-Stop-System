@@ -532,6 +532,97 @@ void test_drivecycle_memory_block_low_speed(void)
     TEST_ASSERT_FALSE(result);
 }
 
+/*==========================================================
+ * UT-SRF-01
+ * Test sr_flip_flop set
+ *==========================================================*/
+void test_sr_flip_flop_set(void)
+{
+    sr_state_t state = {0};
+    bool result = sr_flip_flop(true, false, &state);
+    TEST_ASSERT_TRUE(result);
+    TEST_ASSERT_TRUE(state.Q);
+}
+
+/*==========================================================
+ * UT-SRF-02
+ * Test sr_flip_flop reset
+ *==========================================================*/
+void test_sr_flip_flop_reset(void)
+{
+    sr_state_t state = {1};
+    bool result = sr_flip_flop(false, true, &state);
+    TEST_ASSERT_FALSE(result);
+    TEST_ASSERT_FALSE(state.Q);
+}
+
+/*==========================================================
+ * UT-SRF-03
+ * Test sr_flip_flop hold S=0 R=0
+ *==========================================================*/
+void test_sr_flip_flop_hold_s0_r0(void)
+{
+    sr_state_t state = {1};
+    bool result = sr_flip_flop(false, false, &state);
+    TEST_ASSERT_TRUE(result);
+    TEST_ASSERT_TRUE(state.Q);
+}
+
+/*==========================================================
+ * UT-SRF-04
+ * Test sr_flip_flop hold S=1 R=1
+ *==========================================================*/
+void test_sr_flip_flop_hold_s1_r1(void)
+{
+    sr_state_t state = {1};
+    bool result = sr_flip_flop(true, true, &state);
+    TEST_ASSERT_TRUE(result);
+    TEST_ASSERT_TRUE(state.Q);
+}
+
+/*==========================================================
+ * UT-SRF-05
+ * Test sr_flip_flop null state
+ *==========================================================*/
+void test_sr_flip_flop_null_state(void)
+{
+    bool result = sr_flip_flop(true, false, NULL);
+    TEST_ASSERT_FALSE(result);
+}
+
+/*==========================================================
+ * UT-STM-06
+ * Test standstill_management with setValue true and resetValue false for DoorStatus
+ *==========================================================*/
+void test_standstill_management_setvalue_c3_true(void)
+{
+    // AutoStopActive=true, DoorStatus=true, SeatbeltStatus=false -> setValue = true && (false || true) = true
+    bool result = standstill_management(true, false, true, false);
+    TEST_ASSERT_FALSE(result); // Q_d = false initially
+}
+
+/*==========================================================
+ * UT-STM-07
+ * Test standstill_management resetValue with DoorStatus false
+ *==========================================================*/
+void test_standstill_management_resetvalue_door_false(void)
+{
+    // BrakeStatus=true, DoorStatus=false, SeatbeltStatus=true -> resetValue = true && false && true = false
+    bool result = standstill_management(false, true, false, true);
+    TEST_ASSERT_FALSE(result);
+}
+
+/*==========================================================
+ * UT-STM-08
+ * Test standstill_management resetValue with SeatbeltStatus false
+ *==========================================================*/
+void test_standstill_management_resetvalue_seatbelt_false(void)
+{
+    // BrakeStatus=true, DoorStatus=true, SeatbeltStatus=false -> resetValue = true && true && false = false
+    bool result = standstill_management(false, true, true, false);
+    TEST_ASSERT_FALSE(result);
+}
+
 int main(void)
 {
     UNITY_BEGIN();
@@ -585,6 +676,16 @@ int main(void)
     RUN_TEST(test_drivecycle_memory_block_memory_effect);
     RUN_TEST(test_drivecycle_memory_block_reset_memory);
     RUN_TEST(test_drivecycle_memory_block_low_speed);
+
+    RUN_TEST(test_sr_flip_flop_set);
+    RUN_TEST(test_sr_flip_flop_reset);
+    RUN_TEST(test_sr_flip_flop_hold_s0_r0);
+    RUN_TEST(test_sr_flip_flop_hold_s1_r1);
+    RUN_TEST(test_sr_flip_flop_null_state);
+
+    RUN_TEST(test_standstill_management_setvalue_c3_true);
+    RUN_TEST(test_standstill_management_resetvalue_door_false);
+    RUN_TEST(test_standstill_management_resetvalue_seatbelt_false);
 
     return UNITY_END();
 }
