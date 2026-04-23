@@ -1,5 +1,6 @@
 #include "unity.h"
 #include "ss_inhibit_safety_conditions.h"
+#include <ss_types.h>
 
 /*
  * UT-ISC-01
