@@ -4,8 +4,6 @@
 #include <ss_calib.h>
 #include <ss_types.h>
 
-static static bool sr_flip_flop(bool S, bool R, sr_state_t *state);
-
 // Checks if all safety conditions are met to allow autostop based on the inclination angle, door status, seatbelt status, gear position, and whether the start-stop system is enabled.
 bool inhibit_safety_conditions(float InclinationAngle, bool DoorStatus,
                                bool SeatbeltStatus,
@@ -52,7 +50,7 @@ bool drivecycle_memory_block(bool IgnitionStatus, bool EngineStopRequest,
 	return y;
 }
 
-static bool sr_flip_flop(bool S, bool R, sr_state_t *state) {
+bool sr_flip_flop(bool S, bool R, sr_state_t *state) {
 	bool q_out = false;
 
 	if (state != NULL) {
