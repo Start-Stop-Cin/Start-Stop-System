@@ -14,6 +14,10 @@ bool standstill_management(bool AutoStopActive, bool BrakeStatus,
 bool drivecycle_memory_block(bool IgnitionStatus, bool EngineStopRequest,
                              float VehicleSpeed);
 
+typedef struct {
+	bool Q;
+} sr_state_t;
+
 bool sr_flip_flop(bool S, bool R, sr_state_t *state);
 
 #endif
