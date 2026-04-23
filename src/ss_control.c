@@ -52,8 +52,8 @@ void SS_Step(void) {
 		}
 		break;
 	default:
-		g_SS_State.fsm_state = ST_IDLE;
-		g_SS_State.cnt = 0;
+		// MISRA 16.4
+		g_SS_State.fsm_state = ST_IDLE; // Ação de segurança
 		break;
 	}
 
