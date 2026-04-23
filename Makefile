@@ -1,4 +1,4 @@
-CC      := clang
+CC      := clang-18
 CFLAGS  := -std=c99 -Wall -Wextra -Wpedantic -Werror
 INCLUDE := -I include/
 SRC_DIR := src
