@@ -16,6 +16,11 @@ PROD_SRCS  := $(filter-out $(SRC_DIR)/main.c, $(wildcard $(SRC_DIR)/*.c))
 TEST_SRCS  := $(wildcard $(TEST_DIR)/test_*.c)
 TEST_BINS  := $(patsubst $(TEST_DIR)/%.c, $(OBJ_DIR)/%, $(TEST_SRCS))
 
+# Integration testing
+INTEGRATION_TEST_DIR  := tests/integration
+INTEGRATION_TEST_SRC  := $(INTEGRATION_TEST_DIR)/test_integration_sys_ll.c
+INTEGRATION_TEST_BIN  := $(OBJ_DIR)/test_integration_sys_ll
+
 COV_DIR    := $(OBJ_DIR)/coverage
 COV_FLAGS  := -fprofile-instr-generate -fcoverage-mapping -fcoverage-mcdc -g -O0
 COV_BINS   := $(patsubst $(TEST_DIR)/%.c, $(COV_DIR)/%, $(TEST_SRCS))
@@ -29,7 +34,7 @@ MUT_BINS   := $(patsubst $(TEST_DIR)/%.c, $(MUT_DIR)/%, $(TEST_SRCS))
 MUT_THRESHOLD ?= 80
 
 .PHONY: all build misra format-check clean \
-        test coverage mutation \
+        test coverage mutation integration \
 
 all: build
 
@@ -226,3 +231,11 @@ mutation: $(MUT_BINS)
 	    echo "PASS — all modules meet threshold ($(MUT_THRESHOLD)%)"; \
 	fi; \
 	exit $$failed
+
+integration: $(INTEGRATION_TEST_BIN)
+	$(INTEGRATION_TEST_BIN)
+
+$(INTEGRATION_TEST_BIN): $(INTEGRATION_TEST_SRC) $(PROD_SRCS) $(OBJ_DIR)/unity.o | $(OBJ_DIR_MARKER)
+	$(CC) $(CFLAGS) -g -O0 $(INCLUDE) -I$(UNITY_SRC) \
+		$(INTEGRATION_TEST_SRC) $(PROD_SRCS) $(OBJ_DIR)/unity.o -o $@
+		
