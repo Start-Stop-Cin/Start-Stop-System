@@ -225,6 +225,72 @@ Outputs → Dashboard / Cluster
 
 ---
 
+## Testing
+
+This project adopts a multi-level testing strategy to ensure correctness, robustness, and compliance with requirements.
+
+### Test Levels
+
+The following testing levels are implemented:
+
+- **Unit Tests**
+  - Developed for each module independently
+  - Implemented using the Unity framework
+  - Achieve high Statement, Branch, and MC/DC coverage
+  - Include mutation testing to evaluate test quality
+
+- **Integration Tests**
+  - Validate interaction between modules (Operation, Inhibit, Timer, Fuel, CO2, etc.)
+  - Simulate real system behavior using processed inputs
+  - Focus on System Low-Level requirements
+
+- **Functional Tests**
+  - High-level scenarios validating system behavior end-to-end
+  - Aligned with System High-Level and Low-Level requirements
+  - Executed through SIL/dashboard environment
+
+### Coverage and Quality
+
+- Minimum threshold: **80%** for Statement, Branch, and MC/DC
+- Mutation testing ensures strong fault detection capability
+- Static analysis (MISRA C) enforced in CI
+
+### Continuous Integration (CI)
+
+All tests are automatically executed on every Pull Request, including:
+
+- Build validation
+- Unit tests
+- Coverage (Statement, branch and MC/DC)
+- Mutation testing
+- Static analysis (MISRA)
+- Formatting checks
+
+Only changes that pass all checks are allowed to be merged.
+
+### Running Tests
+
+```bash
+make test           # Run all unit tests
+make coverage       # Generate coverage report
+make mutation       # Run mutation testing
+make integration    # Run integration tests
+```
+
+### Test Documentation
+
+A complete testing document was developed for this project, covering all test levels, including unit, integration, and functional tests and is available in [docs/tests](./docs/tests). This document presents the defined test cases as well as their execution results, including coverage and mutation testing outcomes.
+
+For detailed traceability, the Appendix of the testing document contains a comprehensive spreadsheet with all test cases, including:
+- Test identifiers
+- Descriptions
+- Expected results
+- Traceability to requirements (SW Low-Level, SYS Low-Level, and SYS High-Level)
+
+This ensures full visibility and verification of requirement coverage across all testing levels.
+
+---
+
 ## Validation
 
 The system is validated using SIL through:
