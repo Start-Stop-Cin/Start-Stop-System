@@ -35,6 +35,34 @@ RUN wget -qO /tmp/mull.deb \
     && apt-get install -y /tmp/mull.deb \
     && rm /tmp/mull.deb
 
+# ==============================================================================
+# HMI CLUSTER DEPENDENCIES (Qt6 / X11 / OpenGL)
+# Instala as bibliotecas gráficas necessárias para rodar o AppImage no Dev Container
+# ==============================================================================
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        libegl1 \
+        libgl1 \
+        libopengl0 \
+        libharfbuzz0b \
+        libfontconfig1 \
+        libfreetype6 \
+        libxcb-cursor0 \
+        libxkbcommon-x11-0 \
+        libxcb-xinerama0 \
+        libxcb-icccm4 \
+        libxcb-image0 \
+        libxcb-keysyms1 \
+        libxcb-render-util0 \
+        libxcb-xkb1 \
+        libx11-xcb1 \
+        libxcb-shape0 \
+        libxcb-randr0 \
+        libxcb-sync1 \
+        libsm6 \
+        libice6 \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
 RUN echo "ubuntu ALL=(root) NOPASSWD:ALL" > /etc/sudoers.d/ubuntu && \
     chmod 0440 /etc/sudoers.d/ubuntu
 
