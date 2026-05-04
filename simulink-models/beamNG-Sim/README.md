@@ -128,6 +128,12 @@ The integration allows the vehicle simulator to behave as a virtual ECU test ben
 
 ---
 
+## Fuel saving and CO2 emission
+
+[![Demo Video](https://github.com/user-attachments/assets/67296988-8928-48a4-91af-6d6e5221ffbb)](https://drive.google.com/file/d/1V-ZF-h4WPSD-D2Ert_Hl5NgWsZE216Sd/view?usp=sharing)
+
+10 minutes ride resulting in 1314.9g avoided CO2 and 26ml gasoline saved
+
 # Technologies Used
 
 * MATLAB Simulink
